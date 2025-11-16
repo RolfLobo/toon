@@ -41,31 +41,89 @@ AI is becoming cheaper and more accessible, but larger context windows allow for
 
 ```json
 {
-  "users": [
-    { "id": 1, "name": "Alice", "role": "admin" },
-    { "id": 2, "name": "Bob", "role": "user" }
+  "context": {
+    "task": "Our favorite hikes together",
+    "homeBase": "Boulder",
+    "season": "spring_2025"
+  },
+  "friends": ["ana", "luis", "sam"],
+  "hikes": [
+    {
+      "id": 1,
+      "name": "Blue Lake Trail",
+      "distanceKm": 7.5,
+      "elevationGain": 320,
+      "companion": "ana",
+      "wasSunny": true
+    },
+    {
+      "id": 2,
+      "name": "Ridge Overlook",
+      "distanceKm": 9.2,
+      "elevationGain": 540,
+      "companion": "luis",
+      "wasSunny": false
+    },
+    {
+      "id": 3,
+      "name": "Wildflower Loop",
+      "distanceKm": 5.1,
+      "elevationGain": 180,
+      "companion": "sam",
+      "wasSunny": true
+    }
   ]
 }
 ```
 
-YAML conveys the same infromation with **fewer tokens**:
+YAML conveys the same information with **fewer tokens**:
 
 ```yaml
-users:
+context:
+  task: Our favorite hikes together
+  homeBase: Boulder
+  season: spring_2025
+
+friends:
+  - ana
+  - luis
+  - sam
+
+hikes:
   - id: 1
-    name: Alice
-    role: admin
+    name: Blue Lake Trail
+    distanceKm: 7.5
+    elevationGain: 320
+    companion: ana
+    wasSunny: true
   - id: 2
-    name: Bob
-    role: user
+    name: Ridge Overlook
+    distanceKm: 9.2
+    elevationGain: 540
+    companion: luis
+    wasSunny: false
+  - id: 3
+    name: Wildflower Loop
+    distanceKm: 5.1
+    elevationGain: 180
+    companion: sam
+    wasSunny: true
 ```
 
-TOON conveys the same information with **even fewer tokens**:
+TOON conveys the same information with **even fewer tokens**, while keeping the hikes in a clear tabular layout:
 
-```
-users[2]{id,name,role}:
-  1,Alice,admin
-  2,Bob,user
+```toon
+context:
+  task: Our favorite hikes together
+  homeBase: Boulder
+  season: spring_2025
+
+friends[3]: ana,luis,sam
+
+hikes[3]{id,name,distanceKm,elevationGain,companion,wasSunny}:
+  1,Blue Lake Trail,7.5,320,ana,true
+  2,Ridge Overlook,9.2,540,luis,false
+  3,Wildflower Loop,5.1,180,sam,true
 ```
 
 ## Key Features
