@@ -43,7 +43,7 @@ AI is becoming cheaper and more accessible, but larger context windows allow for
 {
   "context": {
     "task": "Our favorite hikes together",
-    "homeBase": "Boulder",
+    "location": "Boulder",
     "season": "spring_2025"
   },
   "friends": ["ana", "luis", "sam"],
@@ -82,7 +82,7 @@ AI is becoming cheaper and more accessible, but larger context windows allow for
 ```yaml
 context:
   task: Our favorite hikes together
-  homeBase: Boulder
+  location: Boulder
   season: spring_2025
 
 friends:
@@ -118,7 +118,7 @@ TOON conveys the same information with **even fewer tokens**, while keeping the 
 ```toon
 context:
   task: Our favorite hikes together
-  homeBase: Boulder
+  location: Boulder
   season: spring_2025
 
 friends[3]: ana,luis,sam
