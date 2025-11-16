@@ -8,7 +8,7 @@
 [![npm downloads (total)](https://img.shields.io/npm/dt/@toon-format/toon.svg)](https://www.npmjs.com/package/@toon-format/toon)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-**Token-Oriented Object Notation** is a compact, human-readable format for serializing JSON data in LLM prompts. It represents the same objects, arrays, and primitives as JSON, but in a syntax that minimizes tokens and makes structure easy for models to follow.
+**Token-Oriented Object Notation** is a compact, human-readable encoding of the JSON data model for LLM prompts. It provides a lossless serialization of the same objects, arrays, and primitives as JSON, but in a syntax that minimizes tokens and makes structure easy for models to follow.
 
 TOON combines YAML's indentation-based structure for nested objects with a CSV-style tabular layout for uniform arrays. TOON's sweet spot is uniform arrays of objects (multiple fields per row, same structure across items), achieving CSV-like compactness while adding explicit structure that helps LLMs parse and validate data reliably. For deeply nested or non-uniform data, JSON may be more efficient.
 
@@ -25,16 +25,15 @@ Think of it as a translation layer: use JSON programmatically, and encode it as 
 - [Key Features](#key-features)
 - [When Not to Use TOON](#when-not-to-use-toon)
 - [Benchmarks](#benchmarks)
-- [Playgrounds](#playgrounds)
-- [📋 Full Specification](https://github.com/toon-format/spec/blob/main/SPEC.md)
 - [Installation & Quick Start](#installation--quick-start)
+- [Playgrounds](#playgrounds)
 - [CLI](#cli)
 - [Format Overview](#format-overview)
 - [API](#api)
 - [Using TOON in LLM Prompts](#using-toon-in-llm-prompts)
-- [Notes and Limitations](#notes-and-limitations)
 - [Syntax Cheatsheet](#syntax-cheatsheet)
 - [Other Implementations](#other-implementations)
+- [📋 Full Specification](https://github.com/toon-format/spec/blob/main/SPEC.md)
 
 ## Why TOON?
 
