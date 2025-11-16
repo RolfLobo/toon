@@ -76,7 +76,8 @@ AI is becoming cheaper and more accessible, but larger context windows allow for
 }
 ```
 
-YAML conveys the same information with **fewer tokens**:
+<details>
+<summary>YAML conveys the same information with <strong>fewer tokens</strong></summary>
 
 ```yaml
 context:
@@ -109,6 +110,8 @@ hikes:
     companion: sam
     wasSunny: true
 ```
+
+</details>
 
 TOON conveys the same information with **even fewer tokens**, while keeping the hikes in a clear tabular layout:
 
