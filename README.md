@@ -77,7 +77,7 @@ AI is becoming cheaper and more accessible, but larger context windows allow for
 ```
 
 <details>
-<summary>YAML conveys the same information with <strong>fewer tokens</strong></summary>
+<summary>YAML already conveys the same information with <strong>fewer tokens</strong>.</summary>
 
 ```yaml
 context:
