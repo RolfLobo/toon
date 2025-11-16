@@ -37,15 +37,7 @@ Think of it as a translation layer: use JSON programmatically, and encode it as 
 
 ## Why TOON?
 
-AI is becoming cheaper and more accessible, but larger context windows allow for larger data inputs as well. **LLM tokens still cost money** – and standard JSON is verbose and token-expensive. TOON offers a more compact alternative:
-
-<table>
-<tr>
-<th>JSON</th>
-<th>TOON</th>
-</tr>
-<tr>
-<td>
+AI is becoming cheaper and more accessible, but larger context windows allow for larger data inputs as well. **LLM tokens still cost money** – and standard JSON is verbose and token-expensive:
 
 ```json
 {
@@ -84,29 +76,8 @@ AI is becoming cheaper and more accessible, but larger context windows allow for
 }
 ```
 
-</td>
-<td>
-
-```toon
-context:
-  task: Our favorite hikes together
-  location: Boulder
-  season: spring_2025
-
-friends[3]: ana,luis,sam
-
-hikes[3]{id,name,distanceKm,elevationGain,companion,wasSunny}:
-  1,Blue Lake Trail,7.5,320,ana,true
-  2,Ridge Overlook,9.2,540,luis,false
-  3,Wildflower Loop,5.1,180,sam,true
-```
-
-</td>
-</tr>
-</table>
-
 <details>
-<summary>YAML already achieves <strong>fewer tokens</strong> than JSON, but TOON goes further.</summary>
+<summary>YAML already conveys the same information with <strong>fewer tokens</strong>.</summary>
 
 ```yaml
 context:
@@ -141,6 +112,22 @@ hikes:
 ```
 
 </details>
+
+TOON conveys the same information with **even fewer tokens** – combining YAML-like indentation with CSV-style tabular arrays:
+
+```toon
+context:
+  task: Our favorite hikes together
+  location: Boulder
+  season: spring_2025
+
+friends[3]: ana,luis,sam
+
+hikes[3]{id,name,distanceKm,elevationGain,companion,wasSunny}:
+  1,Blue Lake Trail,7.5,320,ana,true
+  2,Ridge Overlook,9.2,540,luis,false
+  3,Wildflower Loop,5.1,180,sam,true
+```
 
 ## Key Features
 
