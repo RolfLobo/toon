@@ -855,6 +855,7 @@ Comprehensive guides, references, and resources to help you get the most out of 
 - **Lua/Neovim:** [toon.nvim](https://github.com/thalesgelinger/toon.nvim)
 - **OCaml:** [ocaml-toon](https://github.com/davesnx/ocaml-toon)
 - **PHP:** [toon-php](https://github.com/HelgeSverre/toon-php)
+- **Laravel Framework:** [laravel-toon](https://github.com/jobmetric/laravel-toon)
 - **R**: [toon](https://github.com/laresbernardo/toon)
 - **Ruby:** [toon-ruby](https://github.com/andrepcg/toon-ruby)
 - **Swift:** [TOONEncoder](https://github.com/mattt/TOONEncoder)
