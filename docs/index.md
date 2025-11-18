@@ -6,8 +6,8 @@ hero:
   text: Token-Oriented Object Notation
   tagline: A compact, human-readable encoding of the JSON data model for LLM prompts.
   image:
-    dark: /logo-nav-dark.svg
-    light: /logo-nav-light.svg
+    dark: /logo-index-dark.svg
+    light: /logo-index-light.svg
     alt: TOON Logo
   actions:
     - theme: brand
