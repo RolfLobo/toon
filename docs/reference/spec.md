@@ -5,7 +5,7 @@ The [TOON specification](https://github.com/toon-format/spec) is the authoritati
 You don't need this page to *use* TOON. It's mainly for implementers and contributors. If you're looking to learn how to use TOON, start with the [Getting Started](/guide/getting-started) guide instead.
 
 > [!TIP]
-> TOON is production-ready, but also an idea in progress. Nothing's set in stone – help shape where it goes by contributing to the spec or sharing feedback.
+> The TOON specification is stable, but also an idea in progress. Nothing's set in stone – help shape where it goes by contributing to it or sharing feedback!
 
 ## Current Version
 

@@ -5,7 +5,7 @@ TOON has official and community implementations across multiple programming lang
 The code examples throughout this documentation site use the TypeScript implementation by default, but the format and concepts apply equally to all languages.
 
 > [!NOTE]
-> When implementing TOON in other languages, please follow the [specification](https://github.com/toon-format/spec/blob/main/SPEC.md) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementation.
+> When implementing TOON in other languages, please follow the [spec](https://github.com/toon-format/spec/blob/main/SPEC.md) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementation.
 
 ## Official Implementations
 

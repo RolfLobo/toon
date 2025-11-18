@@ -14,8 +14,8 @@ hero:
       text: Get Started
       link: /guide/getting-started
     - theme: alt
-      text: Format Overview
-      link: /guide/format-overview
+      text: Benchmarks
+      link: /guide/benchmarks
     - theme: alt
       text: CLI
       link: /cli/

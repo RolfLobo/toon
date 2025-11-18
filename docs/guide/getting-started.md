@@ -113,8 +113,8 @@ TOON is optimized for specific use cases. It aims to:
 
 TOON excels with uniform arrays of objects – data with the same structure across items. For LLM prompts, the format produces deterministic, minimally quoted text with built-in validation. Explicit array lengths (`[N]`) and field headers (`{fields}`) help detect truncation and malformed data, while the tabular structure declares fields once rather than repeating them in every row.
 
-::: tip Production Ready
-TOON is production-ready and actively maintained, with implementations in TypeScript, Python, Go, Rust, .NET, and more. The format is stable, but also an idea in progress. Nothing's set in stone – help shape where it goes by contributing to the [specification](https://github.com/toon-format/spec) or sharing feedback.
+::: tip
+The TOON format is stable, but also an idea in progress. Nothing's set in stone – help shape where it goes by contributing to the [spec](https://github.com/toon-format/spec) or sharing feedback.
 :::
 
 ## When Not to Use TOON

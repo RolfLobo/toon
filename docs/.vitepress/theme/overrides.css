@@ -10,6 +10,10 @@ details summary {
   cursor: pointer;
 }
 
+.vp-doc [class*="language-"] code {
+  color: var(--vp-c-text-1)
+}
+
 .VPHomeHero .image-src {
   max-width: 180px !important;
   max-height: 180px !important;
