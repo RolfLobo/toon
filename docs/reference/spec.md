@@ -9,7 +9,7 @@ You don't need this page to *use* TOON. It's mainly for implementers and contrib
 
 ## Current Version
 
-**Spec v2.0** (2025-11-10) is the current stable version.
+**Spec v{{ $spec.version }}** (2025-11-10) is the current stable version.
 
 ## Guided Tour of the Spec
 
@@ -127,7 +127,7 @@ Validators should verify:
 ## Versioning
 
 The spec uses semantic versioning (major.minor):
-- **Major version** (e.g., v2.0): Breaking changes, incompatible with previous versions
+- **Major version** (e.g., v{{ $spec.version }}): Breaking changes, incompatible with previous versions
 - **Minor version** (e.g., v1.5 → v1.6): Clarifications, additional requirements, or backward-compatible additions
 
 See [Appendix D: Document Changelog](https://github.com/toon-format/spec/blob/main/SPEC.md#appendix-d-document-changelog-informative) for detailed version history.

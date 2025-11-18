@@ -1,6 +1,6 @@
 ---
 layout: home
-
+titleTemplate: Token-Oriented Object Notation
 hero:
   name: TOON
   text: Token-Oriented Object Notation
