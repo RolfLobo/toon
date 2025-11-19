@@ -284,6 +284,7 @@ This benchmark tests **LLM comprehension and data retrieval accuracy** across di
 Eleven datasets designed to test different structural patterns and validation capabilities:
 
 **Primary datasets:**
+
 1. **Tabular** (${tabularSize} employee records): Uniform objects with identical fields – optimal for TOON's tabular format.
 2. **Nested** (${nestedSize} e-commerce orders): Complex structures with nested customer objects and item arrays.
 3. **Analytics** (${analyticsSize} days of metrics): Time-series data with dates and numeric values.
@@ -292,6 +293,7 @@ Eleven datasets designed to test different structural patterns and validation ca
 6. **Nested Config** (${nestedConfigSize} configuration): Deeply nested configuration with minimal tabular eligibility.
 
 **Structural validation datasets:**
+
 7. **Control**: Valid complete dataset (baseline for validation)
 8. **Truncated**: Array with 3 rows removed from end (tests \`[N]\` length detection)
 9. **Extra rows**: Array with 3 additional rows beyond declared length
