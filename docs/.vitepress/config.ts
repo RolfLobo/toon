@@ -1,7 +1,7 @@
 import type { DefaultTheme } from 'vitepress'
 import UnoCSS from 'unocss/vite'
-import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 import { defineConfig } from 'vitepress'
+import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 import { description, github, name, ogImage, ogUrl, releases, twitterImage, version } from './meta'
 
 export default defineConfig({
@@ -97,8 +97,8 @@ export default defineConfig({
   markdown: {
     config(md) {
       md.use(copyOrDownloadAsMarkdownButtons)
-    }
-  }
+    },
+  },
 })
 
 function sidebarPrimary(): DefaultTheme.SidebarItem[] {
