@@ -3,7 +3,7 @@ import { DEFAULT_DELIMITER } from './constants'
 import { decodeValueFromLines } from './decode/decoders'
 import { expandPathsSafe } from './decode/expand'
 import { LineCursor, toParsedLines } from './decode/scanner'
-import { encodeValue } from './encode/encoders'
+import { encodeJsonValue } from './encode/encoders'
 import { normalizeValue } from './encode/normalize'
 
 export { DEFAULT_DELIMITER, DELIMITERS } from './constants'
@@ -19,6 +19,36 @@ export type {
   ResolvedDecodeOptions,
   ResolvedEncodeOptions,
 } from './types'
+
+/**
+ * Encodes a JavaScript value into TOON format as a sequence of lines.
+ *
+ * This function yields TOON lines one at a time without building the full string,
+ * making it suitable for streaming large outputs to files, HTTP responses, or process stdout.
+ *
+ * @param input - Any JavaScript value (objects, arrays, primitives)
+ * @param options - Optional encoding configuration
+ * @returns Iterable of TOON lines (without trailing newlines)
+ *
+ * @example
+ * ```ts
+ * // Stream to stdout
+ * for (const line of encodeLines({ name: 'Alice', age: 30 })) {
+ *   console.log(line)
+ * }
+ *
+ * // Collect to array
+ * const lines = Array.from(encodeLines(data))
+ *
+ * // Equivalent to encode()
+ * const toonString = Array.from(encodeLines(data, options)).join('\n')
+ * ```
+ */
+export function encodeLines(input: unknown, options?: EncodeOptions): Iterable<string> {
+  const normalizedValue = normalizeValue(input)
+  const resolvedOptions = resolveOptions(options)
+  return encodeJsonValue(normalizedValue, resolvedOptions, 0)
+}
 
 /**
  * Encodes a JavaScript value into TOON format string.
@@ -42,9 +72,7 @@ export type {
  * ```
  */
 export function encode(input: unknown, options?: EncodeOptions): string {
-  const normalizedValue = normalizeValue(input)
-  const resolvedOptions = resolveOptions(options)
-  return encodeValue(normalizedValue, resolvedOptions)
+  return Array.from(encodeLines(input, options)).join('\n')
 }
 
 /**

@@ -5,7 +5,7 @@ import * as path from 'node:path'
 import process from 'node:process'
 import { consola } from 'consola'
 import { estimateTokenCount } from 'tokenx'
-import { decode, encode } from '../../toon/src'
+import { decode, encode, encodeLines } from '../../toon/src'
 import { formatInputLabel, readInput } from './utils'
 
 export async function encodeToToon(config: {
@@ -34,7 +34,17 @@ export async function encodeToToon(config: {
     flattenDepth: config.flattenDepth,
   }
 
-  const toonOutput = encode(data, encodeOptions)
+  let toonOutput: string
+
+  // When printing stats, we need the full string for token counting
+  if (config.printStats) {
+    toonOutput = encode(data, encodeOptions)
+  }
+  else {
+    // Use streaming encoder for non-stats path
+    const lines = Array.from(encodeLines(data, encodeOptions))
+    toonOutput = lines.join('\n')
+  }
 
   if (config.output) {
     await fsp.writeFile(config.output, toonOutput, 'utf-8')

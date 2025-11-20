@@ -102,6 +102,16 @@ cat data.json | toon -
 cat data.toon | toon --decode
 ```
 
+## Performance
+
+### Streaming Encoding
+
+JSON→TOON conversions use line-by-line encoding internally, which avoids holding the entire TOON document in memory. This makes the CLI efficient for large datasets without requiring additional configuration.
+
+::: info Token Statistics
+When using the `--stats` flag, the CLI builds the full TOON string once to compute accurate token counts. For maximum memory efficiency on very large files, omit `--stats`.
+:::
+
 ## Options
 
 | Option | Description |

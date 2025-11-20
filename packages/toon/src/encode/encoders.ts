@@ -1,34 +1,42 @@
 import type { Depth, JsonArray, JsonObject, JsonPrimitive, JsonValue, ResolvedEncodeOptions } from '../types'
-import { DOT, LIST_ITEM_MARKER } from '../constants'
+import { DOT, LIST_ITEM_MARKER, LIST_ITEM_PREFIX } from '../constants'
 import { tryFoldKeyChain } from './folding'
 import { isArrayOfArrays, isArrayOfObjects, isArrayOfPrimitives, isEmptyObject, isJsonArray, isJsonObject, isJsonPrimitive } from './normalize'
 import { encodeAndJoinPrimitives, encodeKey, encodePrimitive, formatHeader } from './primitives'
-import { LineWriter } from './writer'
 
 // #region Encode normalized JsonValue
 
-export function encodeValue(value: JsonValue, options: ResolvedEncodeOptions): string {
+export function* encodeJsonValue(value: JsonValue, options: ResolvedEncodeOptions, depth: Depth): Generator<string> {
   if (isJsonPrimitive(value)) {
-    return encodePrimitive(value, options.delimiter)
-  }
+    // Primitives at root level are returned as a single line
+    const encodedPrimitive = encodePrimitive(value, options.delimiter)
 
-  const writer = new LineWriter(options.indent)
+    if (encodedPrimitive !== '')
+      yield encodedPrimitive
+
+    return
+  }
 
   if (isJsonArray(value)) {
-    encodeArray(undefined, value, writer, 0, options)
+    yield* encodeArrayLines(undefined, value, depth, options)
   }
   else if (isJsonObject(value)) {
-    encodeObject(value, writer, 0, options)
+    yield* encodeObjectLines(value, depth, options)
   }
-
-  return writer.toString()
 }
 
 // #endregion
 
 // #region Object encoding
 
-export function encodeObject(value: JsonObject, writer: LineWriter, depth: Depth, options: ResolvedEncodeOptions, rootLiteralKeys?: Set<string>, pathPrefix?: string, remainingDepth?: number): void {
+export function* encodeObjectLines(
+  value: JsonObject,
+  depth: Depth,
+  options: ResolvedEncodeOptions,
+  rootLiteralKeys?: Set<string>,
+  pathPrefix?: string,
+  remainingDepth?: number,
+): Generator<string> {
   const keys = Object.keys(value)
 
   // At root level (depth 0), collect all literal dotted keys for collision checking
@@ -39,11 +47,20 @@ export function encodeObject(value: JsonObject, writer: LineWriter, depth: Depth
   const effectiveFlattenDepth = remainingDepth ?? options.flattenDepth
 
   for (const [key, val] of Object.entries(value)) {
-    encodeKeyValuePair(key, val, writer, depth, options, keys, rootLiteralKeys, pathPrefix, effectiveFlattenDepth)
+    yield* encodeKeyValuePairLines(key, val, depth, options, keys, rootLiteralKeys, pathPrefix, effectiveFlattenDepth)
   }
 }
 
-export function encodeKeyValuePair(key: string, value: JsonValue, writer: LineWriter, depth: Depth, options: ResolvedEncodeOptions, siblings?: readonly string[], rootLiteralKeys?: Set<string>, pathPrefix?: string, flattenDepth?: number): void {
+export function* encodeKeyValuePairLines(
+  key: string,
+  value: JsonValue,
+  depth: Depth,
+  options: ResolvedEncodeOptions,
+  siblings?: readonly string[],
+  rootLiteralKeys?: Set<string>,
+  pathPrefix?: string,
+  flattenDepth?: number,
+): Generator<string> {
   const currentPath = pathPrefix ? `${pathPrefix}${DOT}${key}` : key
   const effectiveFlattenDepth = flattenDepth ?? options.flattenDepth
 
@@ -59,26 +76,26 @@ export function encodeKeyValuePair(key: string, value: JsonValue, writer: LineWr
       if (remainder === undefined) {
         // The folded chain ended at a leaf (primitive, array, or empty object)
         if (isJsonPrimitive(leafValue)) {
-          writer.push(depth, `${encodedFoldedKey}: ${encodePrimitive(leafValue, options.delimiter)}`)
+          yield indentedLine(depth, `${encodedFoldedKey}: ${encodePrimitive(leafValue, options.delimiter)}`, options.indent)
           return
         }
         else if (isJsonArray(leafValue)) {
-          encodeArray(foldedKey, leafValue, writer, depth, options)
+          yield* encodeArrayLines(foldedKey, leafValue, depth, options)
           return
         }
         else if (isJsonObject(leafValue) && isEmptyObject(leafValue)) {
-          writer.push(depth, `${encodedFoldedKey}:`)
+          yield indentedLine(depth, `${encodedFoldedKey}:`, options.indent)
           return
         }
       }
 
       // Case 2: Partially folded with a tail object
       if (isJsonObject(remainder)) {
-        writer.push(depth, `${encodedFoldedKey}:`)
+        yield indentedLine(depth, `${encodedFoldedKey}:`, options.indent)
         // Calculate remaining depth budget (subtract segments already folded)
         const remainingDepth = effectiveFlattenDepth - segmentCount
         const foldedPath = pathPrefix ? `${pathPrefix}${DOT}${foldedKey}` : foldedKey
-        encodeObject(remainder, writer, depth + 1, options, rootLiteralKeys, foldedPath, remainingDepth)
+        yield* encodeObjectLines(remainder, depth + 1, options, rootLiteralKeys, foldedPath, remainingDepth)
         return
       }
     }
@@ -88,15 +105,15 @@ export function encodeKeyValuePair(key: string, value: JsonValue, writer: LineWr
   const encodedKey = encodeKey(key)
 
   if (isJsonPrimitive(value)) {
-    writer.push(depth, `${encodedKey}: ${encodePrimitive(value, options.delimiter)}`)
+    yield indentedLine(depth, `${encodedKey}: ${encodePrimitive(value, options.delimiter)}`, options.indent)
   }
   else if (isJsonArray(value)) {
-    encodeArray(key, value, writer, depth, options)
+    yield* encodeArrayLines(key, value, depth, options)
   }
   else if (isJsonObject(value)) {
-    writer.push(depth, `${encodedKey}:`)
+    yield indentedLine(depth, `${encodedKey}:`, options.indent)
     if (!isEmptyObject(value)) {
-      encodeObject(value, writer, depth + 1, options, rootLiteralKeys, currentPath, effectiveFlattenDepth)
+      yield* encodeObjectLines(value, depth + 1, options, rootLiteralKeys, currentPath, effectiveFlattenDepth)
     }
   }
 }
@@ -105,23 +122,22 @@ export function encodeKeyValuePair(key: string, value: JsonValue, writer: LineWr
 
 // #region Array encoding
 
-export function encodeArray(
+export function* encodeArrayLines(
   key: string | undefined,
   value: JsonArray,
-  writer: LineWriter,
   depth: Depth,
   options: ResolvedEncodeOptions,
-): void {
+): Generator<string> {
   if (value.length === 0) {
     const header = formatHeader(0, { key, delimiter: options.delimiter })
-    writer.push(depth, header)
+    yield indentedLine(depth, header, options.indent)
     return
   }
 
   // Primitive array
   if (isArrayOfPrimitives(value)) {
     const arrayLine = encodeInlineArrayLine(value, options.delimiter, key)
-    writer.push(depth, arrayLine)
+    yield indentedLine(depth, arrayLine, options.indent)
     return
   }
 
@@ -129,7 +145,7 @@ export function encodeArray(
   if (isArrayOfArrays(value)) {
     const allPrimitiveArrays = value.every(arr => isArrayOfPrimitives(arr))
     if (allPrimitiveArrays) {
-      encodeArrayOfArraysAsListItems(key, value, writer, depth, options)
+      yield* encodeArrayOfArraysAsListItemsLines(key, value, depth, options)
       return
     }
   }
@@ -138,36 +154,35 @@ export function encodeArray(
   if (isArrayOfObjects(value)) {
     const header = extractTabularHeader(value)
     if (header) {
-      encodeArrayOfObjectsAsTabular(key, value, header, writer, depth, options)
+      yield* encodeArrayOfObjectsAsTabularLines(key, value, header, depth, options)
     }
     else {
-      encodeMixedArrayAsListItems(key, value, writer, depth, options)
+      yield* encodeMixedArrayAsListItemsLines(key, value, depth, options)
     }
     return
   }
 
   // Mixed array: fallback to expanded format
-  encodeMixedArrayAsListItems(key, value, writer, depth, options)
+  yield* encodeMixedArrayAsListItemsLines(key, value, depth, options)
 }
 
 // #endregion
 
 // #region Array of arrays (expanded format)
 
-export function encodeArrayOfArraysAsListItems(
+export function* encodeArrayOfArraysAsListItemsLines(
   prefix: string | undefined,
   values: readonly JsonArray[],
-  writer: LineWriter,
   depth: Depth,
   options: ResolvedEncodeOptions,
-): void {
+): Generator<string> {
   const header = formatHeader(values.length, { key: prefix, delimiter: options.delimiter })
-  writer.push(depth, header)
+  yield indentedLine(depth, header, options.indent)
 
   for (const arr of values) {
     if (isArrayOfPrimitives(arr)) {
       const arrayLine = encodeInlineArrayLine(arr, options.delimiter)
-      writer.pushListItem(depth + 1, arrayLine)
+      yield indentedListItem(depth + 1, arrayLine, options.indent)
     }
   }
 }
@@ -186,18 +201,17 @@ export function encodeInlineArrayLine(values: readonly JsonPrimitive[], delimite
 
 // #region Array of objects (tabular format)
 
-export function encodeArrayOfObjectsAsTabular(
+export function* encodeArrayOfObjectsAsTabularLines(
   prefix: string | undefined,
   rows: readonly JsonObject[],
   header: readonly string[],
-  writer: LineWriter,
   depth: Depth,
   options: ResolvedEncodeOptions,
-): void {
+): Generator<string> {
   const formattedHeader = formatHeader(rows.length, { key: prefix, fields: header, delimiter: options.delimiter })
-  writer.push(depth, `${formattedHeader}`)
+  yield indentedLine(depth, formattedHeader, options.indent)
 
-  writeTabularRows(rows, header, writer, depth + 1, options)
+  yield* writeTabularRowsLines(rows, header, depth + 1, options)
 }
 
 export function extractTabularHeader(rows: readonly JsonObject[]): string[] | undefined {
@@ -240,17 +254,16 @@ export function isTabularArray(
   return true
 }
 
-function writeTabularRows(
+function* writeTabularRowsLines(
   rows: readonly JsonObject[],
   header: readonly string[],
-  writer: LineWriter,
   depth: Depth,
   options: ResolvedEncodeOptions,
-): void {
+): Generator<string> {
   for (const row of rows) {
     const values = header.map(key => row[key])
     const joinedValue = encodeAndJoinPrimitives(values as JsonPrimitive[], options.delimiter)
-    writer.push(depth, joinedValue)
+    yield indentedLine(depth, joinedValue, options.indent)
   }
 }
 
@@ -258,24 +271,27 @@ function writeTabularRows(
 
 // #region Array of objects (expanded format)
 
-export function encodeMixedArrayAsListItems(
+export function* encodeMixedArrayAsListItemsLines(
   prefix: string | undefined,
   items: readonly JsonValue[],
-  writer: LineWriter,
   depth: Depth,
   options: ResolvedEncodeOptions,
-): void {
+): Generator<string> {
   const header = formatHeader(items.length, { key: prefix, delimiter: options.delimiter })
-  writer.push(depth, header)
+  yield indentedLine(depth, header, options.indent)
 
   for (const item of items) {
-    encodeListItemValue(item, writer, depth + 1, options)
+    yield* encodeListItemValueLines(item, depth + 1, options)
   }
 }
 
-export function encodeObjectAsListItem(obj: JsonObject, writer: LineWriter, depth: Depth, options: ResolvedEncodeOptions): void {
+export function* encodeObjectAsListItemLines(
+  obj: JsonObject,
+  depth: Depth,
+  options: ResolvedEncodeOptions,
+): Generator<string> {
   if (isEmptyObject(obj)) {
-    writer.push(depth, LIST_ITEM_MARKER)
+    yield indentedLine(depth, LIST_ITEM_MARKER, options.indent)
     return
   }
 
@@ -284,13 +300,13 @@ export function encodeObjectAsListItem(obj: JsonObject, writer: LineWriter, dept
   const encodedKey = encodeKey(firstKey)
 
   if (isJsonPrimitive(firstValue)) {
-    writer.pushListItem(depth, `${encodedKey}: ${encodePrimitive(firstValue, options.delimiter)}`)
+    yield indentedListItem(depth, `${encodedKey}: ${encodePrimitive(firstValue, options.delimiter)}`, options.indent)
   }
   else if (isJsonArray(firstValue)) {
     if (isArrayOfPrimitives(firstValue)) {
       // Inline format for primitive arrays
       const arrayPropertyLine = encodeInlineArrayLine(firstValue, options.delimiter, firstKey)
-      writer.pushListItem(depth, arrayPropertyLine)
+      yield indentedListItem(depth, arrayPropertyLine, options.indent)
     }
     else if (isArrayOfObjects(firstValue)) {
       // Check if array of objects can use tabular format
@@ -298,38 +314,38 @@ export function encodeObjectAsListItem(obj: JsonObject, writer: LineWriter, dept
       if (header) {
         // Tabular format for uniform arrays of objects
         const formattedHeader = formatHeader(firstValue.length, { key: firstKey, fields: header, delimiter: options.delimiter })
-        writer.pushListItem(depth, formattedHeader)
-        writeTabularRows(firstValue, header, writer, depth + 1, options)
+        yield indentedListItem(depth, formattedHeader, options.indent)
+        yield* writeTabularRowsLines(firstValue, header, depth + 1, options)
       }
       else {
         // Fall back to list format for non-uniform arrays of objects
-        writer.pushListItem(depth, `${encodedKey}[${firstValue.length}]:`)
+        yield indentedListItem(depth, `${encodedKey}[${firstValue.length}]:`, options.indent)
         for (const item of firstValue) {
-          encodeObjectAsListItem(item, writer, depth + 1, options)
+          yield* encodeObjectAsListItemLines(item, depth + 1, options)
         }
       }
     }
     else {
       // Complex arrays on separate lines (array of arrays, etc.)
-      writer.pushListItem(depth, `${encodedKey}[${firstValue.length}]:`)
+      yield indentedListItem(depth, `${encodedKey}[${firstValue.length}]:`, options.indent)
 
       // Encode array contents at depth + 1
       for (const item of firstValue) {
-        encodeListItemValue(item, writer, depth + 1, options)
+        yield* encodeListItemValueLines(item, depth + 1, options)
       }
     }
   }
   else if (isJsonObject(firstValue)) {
-    writer.pushListItem(depth, `${encodedKey}:`)
+    yield indentedListItem(depth, `${encodedKey}:`, options.indent)
     if (!isEmptyObject(firstValue)) {
-      encodeObject(firstValue, writer, depth + 2, options)
+      yield* encodeObjectLines(firstValue, depth + 2, options)
     }
   }
 
   // Remaining entries on indented lines
   for (let i = 1; i < entries.length; i++) {
     const [key, value] = entries[i]!
-    encodeKeyValuePair(key, value, writer, depth + 1, options)
+    yield* encodeKeyValuePairLines(key, value, depth + 1, options)
   }
 }
 
@@ -337,22 +353,34 @@ export function encodeObjectAsListItem(obj: JsonObject, writer: LineWriter, dept
 
 // #region List item encoding helpers
 
-function encodeListItemValue(
+function* encodeListItemValueLines(
   value: JsonValue,
-  writer: LineWriter,
   depth: Depth,
   options: ResolvedEncodeOptions,
-): void {
+): Generator<string> {
   if (isJsonPrimitive(value)) {
-    writer.pushListItem(depth, encodePrimitive(value, options.delimiter))
+    yield indentedListItem(depth, encodePrimitive(value, options.delimiter), options.indent)
   }
   else if (isJsonArray(value) && isArrayOfPrimitives(value)) {
     const arrayLine = encodeInlineArrayLine(value, options.delimiter)
-    writer.pushListItem(depth, arrayLine)
+    yield indentedListItem(depth, arrayLine, options.indent)
   }
   else if (isJsonObject(value)) {
-    encodeObjectAsListItem(value, writer, depth, options)
+    yield* encodeObjectAsListItemLines(value, depth, options)
   }
+}
+
+// #endregion
+
+// #region Indentation helpers
+
+function indentedLine(depth: Depth, content: string, indentSize: number): string {
+  const indentation = ' '.repeat(indentSize * depth)
+  return indentation + content
+}
+
+function indentedListItem(depth: Depth, content: string, indentSize: number): string {
+  return indentedLine(depth, LIST_ITEM_PREFIX + content, indentSize)
 }
 
 // #endregion

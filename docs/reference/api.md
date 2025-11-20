@@ -127,6 +127,68 @@ encode(data, { delimiter: '\t', keyFolding: 'safe' })
 ```
 :::
 
+## `encodeLines(value, options?)`
+
+Converts any JSON-serializable value to TOON format as a sequence of lines, without building the full string in memory. Suitable for streaming large outputs to files, HTTP responses, or process stdout.
+
+```ts
+import { encodeLines } from '@toon-format/toon'
+
+// Stream to stdout
+for (const line of encodeLines(data)) {
+  console.log(line)
+}
+
+// Write to file line-by-line
+const lines = encodeLines(data, { indent: 2, delimiter: '\t' })
+for (const line of lines) {
+  await writeToStream(`${line}\n`)
+}
+
+// Collect to array
+const lineArray = Array.from(encodeLines(data))
+```
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `value` | `unknown` | Any JSON-serializable value (object, array, primitive, or nested structure) |
+| `options` | `EncodeOptions?` | Optional encoding options (same as `encode()`) |
+
+### Return Value
+
+Returns an `Iterable<string>` that yields TOON lines one at a time. Each yielded string is a single line without a trailing newline character.
+
+::: info Relationship to `encode()`
+`encode(value, options)` is equivalent to:
+```ts
+Array.from(encodeLines(value, options)).join('\n')
+```
+:::
+
+### Example
+
+```ts
+import { createWriteStream } from 'node:fs'
+import { encodeLines } from '@toon-format/toon'
+
+const data = {
+  items: Array.from({ length: 100000 }, (_, i) => ({
+    id: i,
+    name: `Item ${i}`,
+    value: Math.random()
+  }))
+}
+
+// Stream large dataset to file
+const stream = createWriteStream('output.toon')
+for (const line of encodeLines(data, { delimiter: '\t' })) {
+  stream.write(`${line}\n`)
+}
+stream.end()
+```
+
 ## `decode(input, options?)`
 
 Converts a TOON-formatted string back to JavaScript values.
