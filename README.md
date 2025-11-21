@@ -27,6 +27,7 @@ Think of it as a translation layer: use JSON programmatically, and encode it as 
 - [Benchmarks](#benchmarks)
 - [Installation & Quick Start](#installation--quick-start)
 - [Playgrounds](#playgrounds)
+- [Editor Support](#editor-support)
 - [CLI](#cli)
 - [Format Overview](#format-overview)
 - [Using TOON with LLMs](#using-toon-with-llms)
@@ -769,6 +770,28 @@ Experiment with TOON format interactively using these community-built tools for 
 
 - [Format Tokenization Playground](https://www.curiouslychase.com/playground/format-tokenization-exploration)
 - [TOON Tools](https://toontools.vercel.app/)
+
+## Editor Support
+
+### VS Code
+
+[TOON Language Support](https://marketplace.visualstudio.com/items?itemName=vishalraut.vscode-toon) - Syntax highlighting, validation, conversion, and token analysis.
+
+```bash
+code --install-extension vishalraut.vscode-toon
+```
+
+### Tree-sitter Grammar
+
+[tree-sitter-toon](https://github.com/3swordman/tree-sitter-toon) - Grammar for Tree-sitter-compatible editors (Neovim, Helix, Emacs, Zed).
+
+### Neovim
+
+[toon.nvim](https://github.com/thalesgelinger/toon.nvim) - Lua-based plugin.
+
+### Other Editors
+
+Use YAML syntax highlighting as a close approximation.
 
 ## CLI
 
