@@ -764,6 +764,19 @@ console.log(encode(data))
 //   2,Bob,user
 ```
 
+**Streaming large datasets:**
+
+```ts
+import { encodeLines } from '@toon-format/toon'
+
+const largeData = await fetchThousandsOfRecords()
+
+// Memory-efficient streaming for large data
+for (const line of encodeLines(largeData)) {
+  process.stdout.write(`${line}\n`)
+}
+```
+
 ## Playgrounds
 
 Experiment with TOON format interactively using these community-built tools for token comparison, format conversion, and validation:
