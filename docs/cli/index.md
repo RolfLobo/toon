@@ -104,20 +104,34 @@ cat data.toon | toon --decode
 
 ## Performance
 
-### Streaming Encoding
+### Streaming Output
 
-JSON→TOON conversions use line-by-line encoding internally, which avoids holding the entire TOON document in memory. This makes the CLI efficient for large datasets without requiring additional configuration.
+Both encoding and decoding operations use streaming output, writing incrementally without building the full output string in memory. This makes the CLI efficient for large datasets without requiring additional configuration.
+
+**JSON → TOON (Encode)**
+- Streams TOON lines to output
+- No full TOON string in memory
+
+**TOON → JSON (Decode)**
+- Streams JSON tokens to output
+- No full JSON string in memory
 
 ```bash
 # Encode large JSON file with minimal memory usage
 toon huge-dataset.json -o output.toon
 
+# Decode large TOON file with minimal memory usage
+toon huge-dataset.toon -o output.json
+
 # Process millions of records efficiently via stdin
 cat million-records.json | toon > output.toon
+cat million-records.toon | toon --decode > output.json
 ```
 
+Peak memory usage scales with data depth, not total size. This allows processing arbitrarily large files as long as individual nested structures fit in memory.
+
 ::: info Token Statistics
-When using the `--stats` flag, the CLI builds the full TOON string once to compute accurate token counts. For maximum memory efficiency on very large files, omit `--stats`.
+When using the `--stats` flag with encode, the CLI builds the full TOON string once to compute accurate token counts. For maximum memory efficiency on very large files, omit `--stats`.
 :::
 
 ## Options

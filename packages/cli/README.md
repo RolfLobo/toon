@@ -118,18 +118,27 @@ jq '.results' data.json | toon > filtered.toon
 
 ### Large Dataset Processing
 
-The CLI streams output line-by-line without building the full string in memory, making it suitable for processing large datasets:
+The CLI uses streaming output for both encoding and decoding, writing incrementally without building the full output string in memory:
 
 ```bash
 # Encode large JSON file with minimal memory usage
 toon huge-dataset.json -o output.toon
 
-# Process millions of records efficiently
+# Decode large TOON file with streaming JSON output
+toon huge-dataset.toon -o output.json
+
+# Process millions of records efficiently via stdin
 cat million-records.json | toon > output.toon
+cat million-records.toon | toon --decode > output.json
 ```
 
+**Memory efficiency:**
+- **Encode (JSON → TOON)**: Streams TOON lines to output without full string in memory
+- **Decode (TOON → JSON)**: Streams JSON tokens to output without full string in memory
+- Peak memory usage scales with data depth, not total size
+
 > [!NOTE]
-> When using `--stats`, the full output string is kept in memory for token counting. Omit `--stats` for maximum memory efficiency with very large datasets.
+> When using `--stats` with encode, the full output string is kept in memory for token counting. Omit `--stats` for maximum memory efficiency with very large datasets.
 
 ### Key Folding (Since v1.5)
 
@@ -206,7 +215,7 @@ toon data.json --key-folding safe --delimiter "\t" --stats -o output.toon
 - **Pipeline integration** with existing JSON-based workflows
 - **Flexible formatting** with delimiter and indentation options
 - **Key folding** to collapse nested wrappers for additional token savings
-- **Memory-efficient streaming** for processing large datasets without loading everything into memory
+- **Memory-efficient streaming** for both encode and decode operations - process large datasets without loading entire outputs into memory
 
 ## Related
 

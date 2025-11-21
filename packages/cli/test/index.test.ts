@@ -153,15 +153,18 @@ describe('toon CLI', () => {
 
       const cleanup = mockStdin(toonInput)
 
-      const stdout: string[] = []
-      vi.spyOn(console, 'log').mockImplementation((message?: unknown) => {
-        stdout.push(String(message ?? ''))
+      const writeChunks: string[] = []
+      vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
+        writeChunks.push(String(chunk))
+        return true
       })
 
       try {
         await runCli({ rawArgs: ['--decode'] })
-        expect(stdout).toHaveLength(1)
-        const result = JSON.parse(stdout?.at(0) ?? '')
+        const fullOutput = writeChunks.join('')
+        // Remove trailing newline before parsing
+        const jsonOutput = fullOutput.endsWith('\n') ? fullOutput.slice(0, -1) : fullOutput
+        const result = JSON.parse(jsonOutput)
         expect(result).toEqual(data)
       }
       finally {
@@ -279,16 +282,19 @@ describe('toon CLI', () => {
       const toonInput = encode(data)
       const cleanup = mockStdin(toonInput)
 
-      const stdout: string[] = []
-      vi.spyOn(console, 'log').mockImplementation((message?: unknown) => {
-        stdout.push(String(message ?? ''))
+      const writeChunks: string[] = []
+      vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
+        writeChunks.push(String(chunk))
+        return true
       })
 
       try {
         await runCli({ rawArgs: ['--decode', '--no-strict'] })
 
-        expect(stdout).toHaveLength(1)
-        const result = JSON.parse(stdout?.at(0) ?? '')
+        const fullOutput = writeChunks.join('')
+        // Remove trailing newline before parsing
+        const jsonOutput = fullOutput.endsWith('\n') ? fullOutput.slice(0, -1) : fullOutput
+        const result = JSON.parse(jsonOutput)
         expect(result).toEqual(data)
       }
       finally {
