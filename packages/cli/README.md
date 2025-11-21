@@ -134,8 +134,9 @@ cat million-records.toon | toon --decode > output.json
 
 **Memory efficiency:**
 - **Encode (JSON → TOON)**: Streams TOON lines to output without full string in memory
-- **Decode (TOON → JSON)**: Streams JSON tokens to output without full string in memory
+- **Decode (TOON → JSON)**: Uses the same event-based streaming decoder as the `decodeStream` API in `@toon-format/toon`, streaming JSON tokens to output without full string in memory
 - Peak memory usage scales with data depth, not total size
+- When `--expand-paths safe` is enabled, decode falls back to non-streaming mode internally to apply deep-merge expansion before writing JSON
 
 > [!NOTE]
 > When using `--stats` with encode, the full output string is kept in memory for token counting. Omit `--stats` for maximum memory efficiency with very large datasets.

@@ -118,6 +118,31 @@ toon large-dataset.json --output output.toon
 
 This streaming approach prevents out-of-memory errors when preparing large context windows for LLMs. For complete details on `encodeLines()`, see the [API reference](/reference/api#encodelines).
 
+**Consuming streaming LLM outputs:** If your LLM client exposes streaming text and you buffer by lines, you can decode TOON incrementally:
+
+```ts
+import { decodeFromLines } from '@toon-format/toon'
+
+// Buffer streaming response into lines
+const lines: string[] = []
+let buffer = ''
+
+for await (const chunk of modelStream) {
+  buffer += chunk
+  let index: number
+
+  while ((index = buffer.indexOf('\n')) !== -1) {
+    lines.push(buffer.slice(0, index))
+    buffer = buffer.slice(index + 1)
+  }
+}
+
+// Decode buffered lines
+const data = decodeFromLines(lines)
+```
+
+For streaming decode APIs, see [`decodeFromLines()`](/reference/api#decodeFromLines-lines-options) and [`decodeStream()`](/reference/api#decodeStream-source-options).
+
 ## Tips and Pitfalls
 
 **Show, don't describe.** Don't explain TOON syntax in detail – just show an example. Models learn the pattern from context. A simple code block with 2-5 rows is more effective than paragraphs of explanation.

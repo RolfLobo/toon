@@ -1,10 +1,15 @@
 // @ts-check
 import antfu from '@antfu/eslint-config'
 
-export default antfu().append({
+export default antfu({
+  rules: {
+    'no-cond-assign': 'off',
+  },
+}).append({
   files: ['README.md', 'SPEC.md', '**/docs/**/*'],
   rules: {
-    'yaml/quotes': 'off',
+    'import/no-duplicates': 'off',
     'style/no-tabs': 'off',
+    'yaml/quotes': 'off',
   },
 })

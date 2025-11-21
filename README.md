@@ -777,6 +777,46 @@ for (const line of encodeLines(largeData)) {
 }
 ```
 
+**Streaming decode:**
+
+```ts
+import { decodeFromLines, decodeStreamSync } from '@toon-format/toon'
+
+// 1. Lines → value (build full JSON value)
+const value = decodeFromLines([
+  'users[2]{id,name}:',
+  '  1,Alice',
+  '  2,Bob',
+])
+// { users: [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }] }
+
+// 2. Lines → events (for custom streaming consumers)
+const lines = [
+  'users[2]{id,name}:',
+  '  1,Alice',
+  '  2,Bob',
+]
+for (const event of decodeStreamSync(lines)) {
+  // { type: 'startObject' }, { type: 'key', key: 'users' }, ...
+}
+```
+
+**Async streaming decode:**
+
+```ts
+// 3. Async streaming from files or network
+import { createReadStream } from 'node:fs'
+import { createInterface } from 'node:readline'
+import { decodeStream } from '@toon-format/toon'
+
+const fileStream = createReadStream('data.toon', 'utf-8')
+const rl = createInterface({ input: fileStream })
+
+for await (const event of decodeStream(rl)) {
+  // Process events as they arrive
+}
+```
+
 ## Playgrounds
 
 Experiment with TOON format interactively using these community-built tools for token comparison, format conversion, and validation:

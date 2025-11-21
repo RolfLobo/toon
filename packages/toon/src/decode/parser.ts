@@ -305,11 +305,11 @@ export function parseKeyToken(content: string, start: number): { key: string, en
 
 // #region Array content detection helpers
 
-export function isArrayHeaderAfterHyphen(content: string): boolean {
+export function isArrayHeaderContent(content: string): boolean {
   return content.trim().startsWith(OPEN_BRACKET) && findUnquotedChar(content, COLON) !== -1
 }
 
-export function isObjectFirstFieldAfterHyphen(content: string): boolean {
+export function isKeyValueContent(content: string): boolean {
   return findUnquotedChar(content, COLON) !== -1
 }
 

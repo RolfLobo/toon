@@ -300,6 +300,227 @@ decode(toon, { expandPaths: 'safe', strict: false })
 ```
 :::
 
+## `decodeFromLines(lines, options?)`
+
+Decodes TOON format from pre-split lines into a JavaScript value. This is a streaming-friendly wrapper around the event-based decoder that builds the full value in memory.
+
+Useful when you already have lines as an array or iterable (e.g., from file streams, readline interfaces, or network responses) and want the standard decode behavior with path expansion support.
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `lines` | `Iterable<string>` | Iterable of TOON lines (without trailing newlines) |
+| `options` | `DecodeOptions?` | Optional decoding configuration (see below) |
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `indent` | `number` | `2` | Expected number of spaces per indentation level |
+| `strict` | `boolean` | `true` | Enable strict validation (array counts, indentation, delimiter consistency) |
+| `expandPaths` | `'off'` \| `'safe'` | `'off'` | Enable path expansion to reconstruct dotted keys into nested objects |
+
+### Return Value
+
+Returns a `JsonValue` (the parsed JavaScript value: object, array, or primitive).
+
+### Example
+
+**Basic usage with arrays:**
+
+```ts
+import { decodeFromLines } from '@toon-format/toon'
+
+const lines = ['name: Alice', 'age: 30']
+const value = decodeFromLines(lines)
+// { name: 'Alice', age: 30 }
+```
+
+**Streaming from Node.js readline:**
+
+```ts
+import { createReadStream } from 'node:fs'
+import { createInterface } from 'node:readline'
+import { decodeFromLines } from '@toon-format/toon'
+
+const rl = createInterface({
+  input: createReadStream('data.toon'),
+  crlfDelay: Infinity,
+})
+
+const value = decodeFromLines(rl)
+console.log(value)
+```
+
+**With path expansion:**
+
+```ts
+const lines = ['user.name: Alice', 'user.age: 30']
+const value = decodeFromLines(lines, { expandPaths: 'safe' })
+// { user: { name: 'Alice', age: 30 } }
+```
+
+## `decodeStreamSync(lines, options?)`
+
+Synchronously decodes TOON lines into a stream of JSON events. This function yields structured events that represent the JSON data model without building the full value tree.
+
+Useful for streaming processing, custom transformations, or memory-efficient parsing of large datasets where you don't need the full value in memory.
+
+::: info Event Streaming
+This is a low-level API that returns individual parse events. For most use cases, [`decodeFromLines()`](#decodeFromLines-lines-options) or [`decode()`](#decode-input-options) are more convenient.
+
+Path expansion (`expandPaths: 'safe'`) is **not supported** in streaming mode since it requires the full value tree.
+:::
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `lines` | `Iterable<string>` | Iterable of TOON lines (without trailing newlines) |
+| `options` | `DecodeStreamOptions?` | Optional streaming decoding configuration (see below) |
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `indent` | `number` | `2` | Expected number of spaces per indentation level |
+| `strict` | `boolean` | `true` | Enable strict validation (array counts, indentation, delimiter consistency) |
+
+### Return Value
+
+Returns an `Iterable<JsonStreamEvent>` that yields structured events.
+
+### Event Types
+
+Events represent the structure of the JSON data model:
+
+```ts
+type JsonStreamEvent
+  = | { type: 'startObject' }
+    | { type: 'endObject' }
+    | { type: 'startArray' }
+    | { type: 'endArray' }
+    | { type: 'key', key: string }
+    | { type: 'primitive', value: JsonPrimitive }
+
+type JsonPrimitive = string | number | boolean | null
+```
+
+### Example
+
+**Basic event streaming:**
+
+```ts
+import { decodeStreamSync } from '@toon-format/toon'
+
+const lines = ['name: Alice', 'age: 30']
+
+for (const event of decodeStreamSync(lines)) {
+  console.log(event)
+}
+
+// Output:
+// { type: 'startObject' }
+// { type: 'key', key: 'name' }
+// { type: 'primitive', value: 'Alice' }
+// { type: 'key', key: 'age' }
+// { type: 'primitive', value: 30 }
+// { type: 'endObject' }
+```
+
+**Custom processing:**
+
+```ts
+import { decodeStreamSync } from '@toon-format/toon'
+
+const lines = ['users[2]{id,name}:', '  1,Alice', '  2,Bob']
+let userCount = 0
+
+for (const event of decodeStreamSync(lines)) {
+  if (event.type === 'endObject' && userCount < 2) {
+    userCount++
+    console.log(`Processed user ${userCount}`)
+  }
+}
+```
+
+## `decodeStream(source, options?)`
+
+Asynchronously decodes TOON lines into a stream of JSON events. This is the async version of [`decodeStreamSync()`](#decodeStreamSync-lines-options), supporting both synchronous and asynchronous iterables.
+
+Useful for processing file streams, network responses, or other async sources where you want to handle data incrementally as it arrives.
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `source` | `AsyncIterable<string>` \| `Iterable<string>` | Async or sync iterable of TOON lines (without trailing newlines) |
+| `options` | `DecodeStreamOptions?` | Optional streaming decoding configuration (see below) |
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `indent` | `number` | `2` | Expected number of spaces per indentation level |
+| `strict` | `boolean` | `true` | Enable strict validation (array counts, indentation, delimiter consistency) |
+
+### Return Value
+
+Returns an `AsyncIterable<JsonStreamEvent>` that yields structured events asynchronously.
+
+### Example
+
+**Streaming from file:**
+
+```ts
+import { createReadStream } from 'node:fs'
+import { createInterface } from 'node:readline'
+import { decodeStream } from '@toon-format/toon'
+
+const fileStream = createReadStream('data.toon', 'utf-8')
+const rl = createInterface({ input: fileStream, crlfDelay: Infinity })
+
+for await (const event of decodeStream(rl)) {
+  console.log(event)
+  // Process events as they arrive
+}
+```
+
+**Processing events incrementally:**
+
+```ts
+import { decodeStream } from '@toon-format/toon'
+
+const lines = getAsyncLineSource() // AsyncIterable<string>
+
+for await (const event of decodeStream(lines, { strict: true })) {
+  if (event.type === 'key' && event.key === 'id') {
+    // Next event will be the id value
+    const valueEvent = await decodeStream(lines).next()
+    if (valueEvent.value?.type === 'primitive') {
+      console.log('Found ID:', valueEvent.value.value)
+    }
+  }
+}
+```
+
+**Auto-detection of sync/async sources:**
+
+```ts
+// Works with sync iterables
+const syncLines = ['name: Alice', 'age: 30']
+for await (const event of decodeStream(syncLines)) {
+  console.log(event)
+}
+
+// Works with async iterables
+const asyncLines = readLinesFromNetwork()
+for await (const event of decodeStream(asyncLines)) {
+  console.log(event)
+}
+```
+
 ## Round-Trip Compatibility
 
 TOON provides lossless round-trips after normalization:

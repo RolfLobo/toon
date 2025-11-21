@@ -1,14 +1,15 @@
 import type { FileHandle } from 'node:fs/promises'
-import type { DecodeOptions, EncodeOptions } from '../../toon/src'
+import type { DecodeOptions, DecodeStreamOptions, EncodeOptions } from '../../toon/src'
 import type { InputSource } from './types'
 import * as fsp from 'node:fs/promises'
 import * as path from 'node:path'
 import process from 'node:process'
 import { consola } from 'consola'
 import { estimateTokenCount } from 'tokenx'
-import { decode, encode, encodeLines } from '../../toon/src'
+import { decode, decodeStream, encode, encodeLines } from '../../toon/src'
+import { jsonStreamFromEvents } from './json-from-events'
 import { jsonStringifyLines } from './json-stringify-stream'
-import { formatInputLabel, readInput } from './utils'
+import { formatInputLabel, readInput, readLinesFromSource } from './utils'
 
 export async function encodeToToon(config: {
   input: InputSource
@@ -80,22 +81,43 @@ export async function decodeToJson(config: {
   strict: NonNullable<DecodeOptions['strict']>
   expandPaths?: NonNullable<DecodeOptions['expandPaths']>
 }): Promise<void> {
-  const toonContent = await readInput(config.input)
+  // Path expansion requires full value in memory, so use non-streaming path
+  if (config.expandPaths === 'safe') {
+    const toonContent = await readInput(config.input)
 
-  let data: unknown
-  try {
-    const decodeOptions: DecodeOptions = {
-      indent: config.indent,
-      strict: config.strict,
-      expandPaths: config.expandPaths,
+    let data: unknown
+    try {
+      const decodeOptions: DecodeOptions = {
+        indent: config.indent,
+        strict: config.strict,
+        expandPaths: config.expandPaths,
+      }
+      data = decode(toonContent, decodeOptions)
     }
-    data = decode(toonContent, decodeOptions)
-  }
-  catch (error) {
-    throw new Error(`Failed to decode TOON: ${error instanceof Error ? error.message : String(error)}`)
-  }
+    catch (error) {
+      throw new Error(`Failed to decode TOON: ${error instanceof Error ? error.message : String(error)}`)
+    }
 
-  await writeStreamingJson(jsonStringifyLines(data, config.indent), config.output)
+    await writeStreamingJson(jsonStringifyLines(data, config.indent), config.output)
+  }
+  else {
+    try {
+      const lineSource = readLinesFromSource(config.input)
+
+      const decodeStreamOptions: DecodeStreamOptions = {
+        indent: config.indent,
+        strict: config.strict,
+      }
+
+      const events = decodeStream(lineSource, decodeStreamOptions)
+      const jsonChunks = jsonStreamFromEvents(events, config.indent)
+
+      await writeStreamingJson(jsonChunks, config.output)
+    }
+    catch (error) {
+      throw new Error(`Failed to decode TOON: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
 
   if (config.output) {
     const relativeInputPath = formatInputLabel(config.input)
@@ -109,7 +131,7 @@ export async function decodeToJson(config: {
  * Chunks are written one at a time without building the full string in memory.
  */
 async function writeStreamingJson(
-  chunks: Iterable<string>,
+  chunks: AsyncIterable<string> | Iterable<string>,
   outputPath?: string,
 ): Promise<void> {
   // Stream to file using fs/promises API
@@ -119,7 +141,7 @@ async function writeStreamingJson(
     try {
       fileHandle = await fsp.open(outputPath, 'w')
 
-      for (const chunk of chunks) {
+      for await (const chunk of chunks) {
         await fileHandle.write(chunk)
       }
     }
@@ -129,7 +151,7 @@ async function writeStreamingJson(
   }
   // Stream to stdout
   else {
-    for (const chunk of chunks) {
+    for await (const chunk of chunks) {
       process.stdout.write(chunk)
     }
 

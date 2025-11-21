@@ -108,19 +108,25 @@ cat data.toon | toon --decode
 
 Both encoding and decoding operations use streaming output, writing incrementally without building the full output string in memory. This makes the CLI efficient for large datasets without requiring additional configuration.
 
-**JSON → TOON (Encode)**
-- Streams TOON lines to output
-- No full TOON string in memory
+**JSON → TOON (Encode)**:
 
-**TOON → JSON (Decode)**
-- Streams JSON tokens to output
-- No full JSON string in memory
+- Streams TOON lines to output.
+- No full TOON string in memory.
+
+**TOON → JSON (Decode)**:
+
+- Uses the same event-based streaming decoder as the `decodeStream` API in `@toon-format/toon`.
+- Streams JSON tokens to output.
+- No full JSON string in memory.
+- When `--expand-paths safe` is enabled, falls back to non-streaming decode internally to apply deep-merge expansion before writing JSON.
+
+Process large files with minimal memory usage:
 
 ```bash
-# Encode large JSON file with minimal memory usage
+# Encode large JSON file
 toon huge-dataset.json -o output.toon
 
-# Decode large TOON file with minimal memory usage
+# Decode large TOON file
 toon huge-dataset.toon -o output.json
 
 # Process millions of records efficiently via stdin
