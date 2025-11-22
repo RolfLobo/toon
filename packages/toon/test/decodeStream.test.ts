@@ -4,7 +4,7 @@ import { decode, decodeFromLines, decodeStreamSync } from '../src/index'
 
 describe('streaming decode', () => {
   describe('decodeStreamSync', () => {
-    it('should decode simple object', () => {
+    it('decode simple object', () => {
       const input = 'name: Alice\nage: 30'
       const lines = input.split('\n')
       const events = Array.from(decodeStreamSync(lines))
@@ -19,7 +19,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should decode nested object', () => {
+    it('decode nested object', () => {
       const input = 'user:\n  name: Alice\n  age: 30'
       const lines = input.split('\n')
       const events = Array.from(decodeStreamSync(lines))
@@ -37,7 +37,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should decode inline primitive array', () => {
+    it('decode inline primitive array', () => {
       const input = 'scores[3]: 95, 87, 92'
       const lines = input.split('\n')
       const events = Array.from(decodeStreamSync(lines))
@@ -54,7 +54,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should decode list array', () => {
+    it('decode list array', () => {
       const input = 'items[2]:\n  - Apple\n  - Banana'
       const lines = input.split('\n')
       const events = Array.from(decodeStreamSync(lines))
@@ -70,7 +70,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should decode tabular array', () => {
+    it('decode tabular array', () => {
       const input = 'users[2]{name,age}:\n  Alice, 30\n  Bob, 25'
       const lines = input.split('\n')
       const events = Array.from(decodeStreamSync(lines))
@@ -96,7 +96,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should decode root primitive', () => {
+    it('decode root primitive', () => {
       const input = 'Hello World'
       const lines = input.split('\n')
       const events = Array.from(decodeStreamSync(lines))
@@ -106,7 +106,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should decode root array', () => {
+    it('decode root array', () => {
       const input = '[2]:\n  - Apple\n  - Banana'
       const lines = input.split('\n')
       const events = Array.from(decodeStreamSync(lines))
@@ -119,7 +119,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should decode empty input as empty object', () => {
+    it('decode empty input as empty object', () => {
       const lines: string[] = []
       const events = Array.from(decodeStreamSync(lines))
 
@@ -129,7 +129,7 @@ describe('streaming decode', () => {
       ])
     })
 
-    it('should throw on expandPaths option', () => {
+    it('throw on expandPaths option', () => {
       const input = 'name: Alice'
       const lines = input.split('\n')
 
@@ -137,7 +137,7 @@ describe('streaming decode', () => {
         .toThrow('expandPaths is not supported in streaming decode')
     })
 
-    it('should enforce strict mode validation', () => {
+    it('enforce strict mode validation', () => {
       const input = 'items[2]:\n  - Apple'
       const lines = input.split('\n')
 
@@ -145,7 +145,7 @@ describe('streaming decode', () => {
         .toThrow()
     })
 
-    it('should allow count mismatch in non-strict mode', () => {
+    it('allow count mismatch in non-strict mode', () => {
       const input = 'items[2]:\n  - Apple'
       const lines = input.split('\n')
 
@@ -158,7 +158,7 @@ describe('streaming decode', () => {
   })
 
   describe('buildValueFromEvents', () => {
-    it('should build object from events', () => {
+    it('build object from events', () => {
       const events = [
         { type: 'startObject' as const },
         { type: 'key' as const, key: 'name' },
@@ -173,7 +173,7 @@ describe('streaming decode', () => {
       expect(result).toEqual({ name: 'Alice', age: 30 })
     })
 
-    it('should build nested object from events', () => {
+    it('build nested object from events', () => {
       const events = [
         { type: 'startObject' as const },
         { type: 'key' as const, key: 'user' },
@@ -189,7 +189,7 @@ describe('streaming decode', () => {
       expect(result).toEqual({ user: { name: 'Alice' } })
     })
 
-    it('should build array from events', () => {
+    it('build array from events', () => {
       const events = [
         { type: 'startArray' as const, length: 3 },
         { type: 'primitive' as const, value: 1 },
@@ -203,7 +203,7 @@ describe('streaming decode', () => {
       expect(result).toEqual([1, 2, 3])
     })
 
-    it('should build primitive from events', () => {
+    it('build primitive from events', () => {
       const events = [
         { type: 'primitive' as const, value: 'Hello' },
       ]
@@ -213,11 +213,11 @@ describe('streaming decode', () => {
       expect(result).toEqual('Hello')
     })
 
-    it('should throw on incomplete event stream', () => {
+    it('throw on incomplete event stream', () => {
       const events = [
         { type: 'startObject' as const },
         { type: 'key' as const, key: 'name' },
-        // Missing primitive and endObject
+        // Missing primitive and `endObject`
       ]
 
       expect(() => buildValueFromEvents(events))
@@ -226,7 +226,7 @@ describe('streaming decode', () => {
   })
 
   describe('decodeFromLines', () => {
-    it('should produce same result as decode', () => {
+    it('produce same result as decode', () => {
       const input = 'name: Alice\nage: 30\nscores[3]: 95, 87, 92'
       const lines = input.split('\n')
 
@@ -236,7 +236,7 @@ describe('streaming decode', () => {
       expect(fromLines).toEqual(fromString)
     })
 
-    it('should support expandPaths option', () => {
+    it('support expandPaths option', () => {
       const input = 'user.name: Alice\nuser.age: 30'
       const lines = input.split('\n')
 
@@ -250,7 +250,7 @@ describe('streaming decode', () => {
       })
     })
 
-    it('should handle complex nested structures', () => {
+    it('handle complex nested structures', () => {
       const input = [
         'users[2]:',
         '  - name: Alice',
@@ -271,7 +271,7 @@ describe('streaming decode', () => {
       })
     })
 
-    it('should handle tabular arrays', () => {
+    it('handle tabular arrays', () => {
       const input = [
         'users[3]{name,age,city}:',
         '  Alice, 30, NYC',
@@ -294,7 +294,6 @@ describe('streaming decode', () => {
   })
 
   describe('streaming equivalence', () => {
-    // Test that streaming produces same results as non-streaming for various inputs
     const testCases = [
       {
         name: 'simple object',

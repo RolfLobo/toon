@@ -303,6 +303,184 @@ describe('toon CLI', () => {
     })
   })
 
+  describe('encode options', () => {
+    it('encodes with --key-folding safe', async () => {
+      const data = {
+        data: {
+          metadata: {
+            items: ['a', 'b'],
+          },
+        },
+      }
+
+      const context = await createCliTestContext({
+        'input.json': JSON.stringify(data),
+      })
+
+      try {
+        await context.run(['input.json', '--keyFolding', 'safe', '--output', 'output.toon'])
+
+        const output = await context.read('output.toon')
+        const expected = encode(data, { keyFolding: 'safe' })
+
+        expect(output).toBe(expected)
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+
+    it('encodes with --flatten-depth', async () => {
+      const data = {
+        level1: {
+          level2: {
+            level3: {
+              value: 'deep',
+            },
+          },
+        },
+      }
+
+      const context = await createCliTestContext({
+        'input.json': JSON.stringify(data),
+      })
+
+      try {
+        await context.run(['input.json', '--keyFolding', 'safe', '--flattenDepth', '2', '--output', 'output.toon'])
+
+        const output = await context.read('output.toon')
+        const expected = encode(data, { keyFolding: 'safe', flattenDepth: 2 })
+
+        expect(output).toBe(expected)
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+  })
+
+  describe('decode options', () => {
+    it('decodes with --expand-paths safe', async () => {
+      const data = {
+        data: {
+          metadata: {
+            items: ['a', 'b'],
+          },
+        },
+      }
+      const toonInput = encode(data, { keyFolding: 'safe' })
+
+      const context = await createCliTestContext({
+        'input.toon': toonInput,
+      })
+
+      try {
+        await context.run(['input.toon', '--decode', '--expandPaths', 'safe', '--output', 'output.json'])
+
+        const output = await context.read('output.json')
+        const result = JSON.parse(output)
+
+        expect(result).toEqual(data)
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+
+    it('decodes with --indent for JSON formatting', async () => {
+      const data = {
+        a: 1,
+        b: [2, 3],
+        c: { nested: true },
+      }
+      const toonInput = encode(data, { indent: 4 })
+
+      const context = await createCliTestContext({
+        'input.toon': toonInput,
+      })
+
+      try {
+        await context.run(['input.toon', '--decode', '--indent', '4', '--output', 'output.json'])
+
+        const output = await context.read('output.json')
+        const result = JSON.parse(output)
+
+        expect(result).toEqual(data)
+        expect(output).toContain('    ') // Should have 4-space indentation
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+
+    it('decodes root primitive number', async () => {
+      const toonInput = '42'
+
+      const cleanup = mockStdin(toonInput)
+
+      const writeChunks: string[] = []
+      vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
+        writeChunks.push(String(chunk))
+        return true
+      })
+
+      try {
+        await runCli({ rawArgs: ['--decode'] })
+
+        const fullOutput = writeChunks.join('')
+        expect(fullOutput).toBe('42\n')
+      }
+      finally {
+        cleanup()
+      }
+    })
+
+    it('decodes root primitive string', async () => {
+      const toonInput = '"Hello World"'
+
+      const cleanup = mockStdin(toonInput)
+
+      const writeChunks: string[] = []
+      vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
+        writeChunks.push(String(chunk))
+        return true
+      })
+
+      try {
+        await runCli({ rawArgs: ['--decode'] })
+
+        const fullOutput = writeChunks.join('')
+        const jsonOutput = fullOutput.endsWith('\n') ? fullOutput.slice(0, -1) : fullOutput
+        expect(JSON.parse(jsonOutput)).toBe('Hello World')
+      }
+      finally {
+        cleanup()
+      }
+    })
+
+    it('decodes root primitive boolean', async () => {
+      const toonInput = 'true'
+
+      const cleanup = mockStdin(toonInput)
+
+      const writeChunks: string[] = []
+      vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
+        writeChunks.push(String(chunk))
+        return true
+      })
+
+      try {
+        await runCli({ rawArgs: ['--decode'] })
+
+        const fullOutput = writeChunks.join('')
+        expect(fullOutput).toBe('true\n')
+      }
+      finally {
+        cleanup()
+      }
+    })
+  })
+
   describe('streaming output', () => {
     it('streams large JSON to TOON file with identical output', async () => {
       const data = {
@@ -331,6 +509,40 @@ describe('toon CLI', () => {
 
         expect(output).toBe(expected)
         expect(consolaSuccess).toHaveBeenCalledWith(expect.stringMatching(/Encoded .* → .*/))
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+
+    it('streams large TOON to JSON file with streaming decode', async () => {
+      const data = {
+        records: Array.from({ length: 1000 }, (_, i) => ({
+          id: i,
+          title: `Record ${i}`,
+          score: Math.random() * 100,
+        })),
+      }
+
+      const toonContent = encode(data, {
+        delimiter: DEFAULT_DELIMITER,
+        indent: 2,
+      })
+
+      const context = await createCliTestContext({
+        'large-input.toon': toonContent,
+      })
+
+      const consolaSuccess = vi.spyOn(consola, 'success').mockImplementation(() => undefined)
+
+      try {
+        await context.run(['large-input.toon', '--decode', '--output', 'output.json'])
+
+        const output = await context.read('output.json')
+        const result = JSON.parse(output)
+
+        expect(result).toEqual(data)
+        expect(consolaSuccess).toHaveBeenCalledWith(expect.stringMatching(/Decoded .* → .*/))
       }
       finally {
         await context.cleanup()
@@ -495,6 +707,78 @@ describe('toon CLI', () => {
 
         expect(exitSpy).toHaveBeenCalledWith(1)
         expect(consolaError).toHaveBeenCalled()
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+
+    it('rejects invalid --key-folding value', async () => {
+      const context = await createCliTestContext({
+        'input.json': JSON.stringify({ value: 1 }),
+      })
+
+      const consolaError = vi.spyOn(consola, 'error').mockImplementation(() => undefined)
+      const exitSpy = vi.mocked(process.exit)
+
+      try {
+        await context.run(['input.json', '--keyFolding', 'invalid'])
+
+        expect(exitSpy).toHaveBeenCalledWith(1)
+
+        const errorCall = consolaError.mock.calls.at(0)
+        expect(errorCall).toBeDefined()
+        const [error] = errorCall!
+        expect(error).toBeInstanceOf(Error)
+        expect(error.message).toContain('Invalid keyFolding value')
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+
+    it('rejects invalid --expandPaths value', async () => {
+      const context = await createCliTestContext({
+        'input.toon': 'key: value',
+      })
+
+      const consolaError = vi.spyOn(consola, 'error').mockImplementation(() => undefined)
+      const exitSpy = vi.mocked(process.exit)
+
+      try {
+        await context.run(['input.toon', '--decode', '--expandPaths', 'invalid'])
+
+        expect(exitSpy).toHaveBeenCalledWith(1)
+
+        const errorCall = consolaError.mock.calls.at(0)
+        expect(errorCall).toBeDefined()
+        const [error] = errorCall!
+        expect(error).toBeInstanceOf(Error)
+        expect(error.message).toContain('Invalid expandPaths value')
+      }
+      finally {
+        await context.cleanup()
+      }
+    })
+
+    it('rejects invalid --flattenDepth value', async () => {
+      const context = await createCliTestContext({
+        'input.json': JSON.stringify({ value: 1 }),
+      })
+
+      const consolaError = vi.spyOn(consola, 'error').mockImplementation(() => undefined)
+      const exitSpy = vi.mocked(process.exit)
+
+      try {
+        await context.run(['input.json', '--flattenDepth', '-1'])
+
+        expect(exitSpy).toHaveBeenCalledWith(1)
+
+        const errorCall = consolaError.mock.calls.at(0)
+        expect(errorCall).toBeDefined()
+        const [error] = errorCall!
+        expect(error).toBeInstanceOf(Error)
+        expect(error.message).toContain('Invalid flattenDepth value')
       }
       finally {
         await context.cleanup()
