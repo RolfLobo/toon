@@ -177,6 +177,10 @@ yarn global add @toon-format/cli
 
 For full CLI documentation, see the [CLI reference](/cli/).
 
+## Media Type & File Extension
+
+TOON files conventionally use the `.toon` extension. For HTTP transmission, the provisional media type is `text/toon`, always with UTF-8 encoding. While you may specify `charset=utf-8` explicitly, it's optional – UTF-8 is the default assumption. This follows the registration process outlined in [spec §18.2](https://github.com/toon-format/spec/blob/main/SPEC.md#182-provisional-media-type).
+
 ## Your First Example
 
 The examples below use the TypeScript library for demonstration, but the same operations work in any language with a TOON implementation.
@@ -233,20 +237,6 @@ console.log(JSON.stringify(data, null, 2))
 ```
 
 Round-tripping is lossless: `decode(encode(x))` always equals `x` (after normalization of non-JSON types like `Date`, `NaN`, etc.).
-
-## Media Type & File Extension
-
-When using TOON over HTTP or in content-type–aware systems:
-
-- Use `text/toon` as the media type (provisional; see [spec §18.2](https://github.com/toon-format/spec/blob/main/SPEC.md#182-provisional-media-type))
-- Use `.toon` as the standard file extension
-- TOON is always UTF-8 encoded; `charset=utf-8` is optional
-
-Example:
-
-```http
-Content-Type: text/toon; charset=utf-8
-```
 
 ## Where to Go Next
 

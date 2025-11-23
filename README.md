@@ -138,23 +138,7 @@ hikes[3]{id,name,distanceKm,elevationGain,companion,wasSunny}:
 
 ## Media Type & File Extension
 
-For HTTP and content-type–aware contexts, TOON defines:
-
-- **Media type (provisional):** `text/toon`
-- **Charset:** Always UTF-8 (`charset=utf-8` MAY be specified; if omitted, UTF-8 MUST be assumed)
-- **File extension:** `.toon`
-
-Example HTTP usage:
-
-```http
-GET /resource HTTP/1.1
-Accept: text/toon
-
-HTTP/1.1 200 OK
-Content-Type: text/toon
-```
-
-See [SPEC.md §18.2](https://github.com/toon-format/spec/blob/main/SPEC.md#182-provisional-media-type) for details.
+By convention, TOON files use the `.toon` extension and the provisional media type `text/toon` for HTTP and content-type–aware contexts. TOON documents are always UTF-8 encoded; the `charset=utf-8` parameter may be specified but defaults to UTF-8 when omitted. See [SPEC.md §18.2](https://github.com/toon-format/spec/blob/main/SPEC.md#182-provisional-media-type) for normative details.
 
 ## When Not to Use TOON
 
@@ -797,45 +781,8 @@ for (const line of encodeLines(largeData)) {
 }
 ```
 
-**Streaming decode:**
-
-```ts
-import { decodeFromLines, decodeStreamSync } from '@toon-format/toon'
-
-// 1. Lines → value (build full JSON value)
-const value = decodeFromLines([
-  'users[2]{id,name}:',
-  '  1,Alice',
-  '  2,Bob',
-])
-// { users: [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }] }
-
-// 2. Lines → events (for custom streaming consumers)
-const lines = [
-  'users[2]{id,name}:',
-  '  1,Alice',
-  '  2,Bob',
-]
-for (const event of decodeStreamSync(lines)) {
-  // { type: 'startObject' }, { type: 'key', key: 'users' }, ...
-}
-```
-
-**Async streaming decode:**
-
-```ts
-// 3. Async streaming from files or network
-import { createReadStream } from 'node:fs'
-import { createInterface } from 'node:readline'
-import { decodeStream } from '@toon-format/toon'
-
-const fileStream = createReadStream('data.toon', 'utf-8')
-const rl = createInterface({ input: fileStream })
-
-for await (const event of decodeStream(rl)) {
-  // Process events as they arrive
-}
-```
+> [!TIP]
+> For streaming decode APIs, see [`decodeFromLines()`](/reference/api#decodeFromLines-lines-options) and [`decodeStream()`](/reference/api#decodeStream-source-options).
 
 ## Playgrounds
 
@@ -909,19 +856,19 @@ Follow the detailed [LLM integration guide](https://toonformat.dev/guide/llm-pro
 
 Comprehensive guides, references, and resources to help you get the most out of the TOON format and tools.
 
-**Getting Started:**
+### Getting Started
 
 - [Introduction & Installation](https://toonformat.dev/guide/getting-started) – What TOON is, when to use it, first steps
 - [Format Overview](https://toonformat.dev/guide/format-overview) – Complete syntax with examples
 - [Benchmarks](https://toonformat.dev/guide/benchmarks) – Accuracy & token efficiency results
 
-**Tools & Integration:**
+### Tools & Integration
 
 - [CLI](https://toonformat.dev/cli/) – Command-line tool for  JSON↔TOON conversions
 - [Using TOON with LLMs](https://toonformat.dev/guide/llm-prompts) – Prompting strategies & validation
 - [Playgrounds](https://toonformat.dev/ecosystem/tools-and-playgrounds) – Interactive tools
 
-**Reference:**
+### References
 
 - [API Reference](https://toonformat.dev/reference/api) – TypeScript/JavaScript encode/decode API
 - [Syntax Cheatsheet](https://toonformat.dev/reference/syntax-cheatsheet) – Quick format lookup
