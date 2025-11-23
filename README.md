@@ -136,6 +136,26 @@ hikes[3]{id,name,distanceKm,elevationGain,companion,wasSunny}:
 - 🧺 **Tabular Arrays:** Uniform arrays of objects collapse into tables that declare fields once and stream row values line by line.
 - 🌐 **Multi-Language Ecosystem:** Spec-driven implementations in TypeScript, Python, Go, Rust, .NET, and other languages.
 
+## Media Type & File Extension
+
+For HTTP and content-type–aware contexts, TOON defines:
+
+- **Media type (provisional):** `text/toon`
+- **Charset:** Always UTF-8 (`charset=utf-8` MAY be specified; if omitted, UTF-8 MUST be assumed)
+- **File extension:** `.toon`
+
+Example HTTP usage:
+
+```http
+GET /resource HTTP/1.1
+Accept: text/toon
+
+HTTP/1.1 200 OK
+Content-Type: text/toon
+```
+
+See [SPEC.md §18.2](https://github.com/toon-format/spec/blob/main/SPEC.md#182-provisional-media-type) for details.
+
 ## When Not to Use TOON
 
 TOON excels with uniform arrays of objects, but there are cases where other formats are better:
@@ -889,17 +909,20 @@ Follow the detailed [LLM integration guide](https://toonformat.dev/guide/llm-pro
 
 Comprehensive guides, references, and resources to help you get the most out of the TOON format and tools.
 
-**Getting Started**
+**Getting Started:**
+
 - [Introduction & Installation](https://toonformat.dev/guide/getting-started) – What TOON is, when to use it, first steps
 - [Format Overview](https://toonformat.dev/guide/format-overview) – Complete syntax with examples
 - [Benchmarks](https://toonformat.dev/guide/benchmarks) – Accuracy & token efficiency results
 
-**Tools & Integration**
+**Tools & Integration:**
+
 - [CLI](https://toonformat.dev/cli/) – Command-line tool for  JSON↔TOON conversions
 - [Using TOON with LLMs](https://toonformat.dev/guide/llm-prompts) – Prompting strategies & validation
 - [Playgrounds](https://toonformat.dev/ecosystem/tools-and-playgrounds) – Interactive tools
 
-**Reference**
+**Reference:**
+
 - [API Reference](https://toonformat.dev/reference/api) – TypeScript/JavaScript encode/decode API
 - [Syntax Cheatsheet](https://toonformat.dev/reference/syntax-cheatsheet) – Quick format lookup
 - [Specification v2.0](https://github.com/toon-format/spec/blob/main/SPEC.md) – Normative rules for implementers
@@ -907,7 +930,7 @@ Comprehensive guides, references, and resources to help you get the most out of 
 ## Other Implementations
 
 > [!NOTE]
-> When implementing TOON in other languages, please follow the [specification](https://github.com/toon-format/spec/blob/main/SPEC.md) (currently v2.0) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementations.
+> When implementing TOON in other languages, please follow the [Specification](https://github.com/toon-format/spec/blob/main/SPEC.md) (currently v2.0) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementations.
 
 ### Official Implementations
 

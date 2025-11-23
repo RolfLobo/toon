@@ -11,6 +11,11 @@ You don't need this page to *use* TOON. It's mainly for implementers and contrib
 
 **Spec v{{ $spec.version }}** (2025-11-10) is the current stable version.
 
+The spec defines a provisional media type and file extension in §18.2:
+
+- **Media type:** `text/toon` (provisional, UTF-8 only)
+- **File extension:** `.toon`
+
 ## Guided Tour of the Spec
 
 ### Core Concepts

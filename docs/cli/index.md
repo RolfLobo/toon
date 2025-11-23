@@ -87,6 +87,8 @@ cat data.toon | toon --decode
 
 :::
 
+By convention, TOON files use the `.toon` extension and the provisional media type `text/toon` (see [spec §18.2](https://github.com/toon-format/spec/blob/main/SPEC.md#182-provisional-media-type)).
+
 ### Standard Input
 
 Omit the input argument or use `-` to read from stdin. This enables piping data directly from other commands:

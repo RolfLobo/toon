@@ -1,6 +1,6 @@
 # Syntax Cheatsheet
 
-Quick reference for mapping JSON to TOON format. For rigorous, normative syntax rules and edge cases, see the [specification](/reference/spec).
+Quick reference for mapping JSON to TOON format. For rigorous, normative syntax rules and edge cases, see the [Specification](/reference/spec).
 
 ## Objects
 

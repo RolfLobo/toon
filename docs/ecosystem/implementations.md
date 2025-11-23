@@ -1,6 +1,6 @@
 # Implementations
 
-TOON has official and community implementations across multiple programming languages. All implementations are intended to conform to the same [specification](https://github.com/toon-format/spec) to ensure compatibility and interoperability.
+TOON has official and community implementations across multiple programming languages. All implementations are intended to conform to the same [Specification](https://github.com/toon-format/spec) to ensure compatibility and interoperability.
 
 The code examples throughout this documentation site use the TypeScript implementation by default, but the format and concepts apply equally to all languages.
 

@@ -53,4 +53,4 @@ const toon = encode(data)
 const data = decode(toon)
 ```
 
-See the [API reference](/reference/api) for details.
+See the [API Reference](/reference/api) for details.

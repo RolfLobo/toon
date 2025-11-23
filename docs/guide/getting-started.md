@@ -234,8 +234,20 @@ console.log(JSON.stringify(data, null, 2))
 
 Round-tripping is lossless: `decode(encode(x))` always equals `x` (after normalization of non-JSON types like `Date`, `NaN`, etc.).
 
+## Media Type & File Extension
+
+When using TOON over HTTP or in content-type–aware systems:
+
+- Use `text/toon` as the media type (provisional; see [spec §18.2](https://github.com/toon-format/spec/blob/main/SPEC.md#182-provisional-media-type))
+- Use `.toon` as the standard file extension
+- TOON is always UTF-8 encoded; `charset=utf-8` is optional
+
+Example:
+
+```http
+Content-Type: text/toon; charset=utf-8
+```
+
 ## Where to Go Next
 
-Now that you've seen your first TOON document, read the [Format Overview](/guide/format-overview) for complete syntax details (objects, arrays, quoting rules, key folding), then explore [Using TOON with LLMs](/guide/llm-prompts) to see how to use it effectively in prompts. For implementation details, check the [API reference](/reference/api) (TypeScript) or the [specification](/reference/spec) (language-agnostic normative rules).
-
-For large datasets or streaming use-cases, see `encodeLines`, `decodeFromLines`, and `decodeStream` in the [API reference](/reference/api).
+Now that you've seen your first TOON document, read the [Format Overview](/guide/format-overview) for complete syntax details (objects, arrays, quoting rules, key folding), then explore [Using TOON with LLMs](/guide/llm-prompts) to see how to use it effectively in prompts. For implementation details, check the [API Reference](/reference/api) (TypeScript) or the [Specification](/reference/spec) (language-agnostic normative rules).
