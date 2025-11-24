@@ -84,12 +84,10 @@ context:
   task: Our favorite hikes together
   location: Boulder
   season: spring_2025
-
 friends:
   - ana
   - luis
   - sam
-
 hikes:
   - id: 1
     name: Blue Lake Trail
