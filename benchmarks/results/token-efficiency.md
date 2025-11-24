@@ -5,34 +5,34 @@ Datasets with nested or semi-uniform structures. CSV excluded as it cannot prope
 ```
 🛒 E-commerce orders with nested structures  ┊  Tabular: 33%
    │
-   TOON                █████████████░░░░░░░    72,771 tokens
-   ├─ vs JSON          (−33.1%)               108,806 tokens
-   ├─ vs JSON compact  (+5.5%)                 68,975 tokens
-   ├─ vs YAML          (−14.2%)                84,780 tokens
-   └─ vs XML           (−40.5%)               122,406 tokens
+   TOON                █████████████░░░░░░░    73,271 tokens
+   ├─ vs JSON          (−32.7%)               108,806 tokens
+   ├─ vs JSON compact  (+6.2%)                 68,975 tokens
+   ├─ vs YAML          (−13.6%)                84,780 tokens
+   └─ vs XML           (−40.1%)               122,406 tokens
 
 🧾 Semi-uniform event logs  ┊  Tabular: 50%
    │
-   TOON                █████████████████░░░   153,211 tokens
-   ├─ vs JSON          (−15.0%)               180,176 tokens
-   ├─ vs JSON compact  (+19.9%)               127,731 tokens
-   ├─ vs YAML          (−0.8%)                154,505 tokens
-   └─ vs XML           (−25.2%)               204,777 tokens
+   TOON                █████████████████░░░   155,211 tokens
+   ├─ vs JSON          (−13.9%)               180,176 tokens
+   ├─ vs JSON compact  (+21.5%)               127,731 tokens
+   ├─ vs YAML          (+0.5%)                154,505 tokens
+   └─ vs XML           (−24.2%)               204,777 tokens
 
 🧩 Deeply nested configuration  ┊  Tabular: 0%
    │
-   TOON                ██████████████░░░░░░       631 tokens
-   ├─ vs JSON          (−31.3%)                   919 tokens
-   ├─ vs JSON compact  (+11.9%)                   564 tokens
-   ├─ vs YAML          (−6.2%)                    673 tokens
-   └─ vs XML           (−37.4%)                 1,008 tokens
+   TOON                ██████████████░░░░░░       636 tokens
+   ├─ vs JSON          (−30.8%)                   919 tokens
+   ├─ vs JSON compact  (+12.8%)                   564 tokens
+   ├─ vs YAML          (−5.5%)                    673 tokens
+   └─ vs XML           (−36.9%)                 1,008 tokens
 
 ──────────────────────────────────── Total ────────────────────────────────────
-   TOON                ████████████████░░░░   226,613 tokens
-   ├─ vs JSON          (−21.8%)               289,901 tokens
-   ├─ vs JSON compact  (+14.9%)               197,270 tokens
-   ├─ vs YAML          (−5.6%)                239,958 tokens
-   └─ vs XML           (−31.0%)               328,191 tokens
+   TOON                ████████████████░░░░   229,118 tokens
+   ├─ vs JSON          (−21.0%)               289,901 tokens
+   ├─ vs JSON compact  (+16.1%)               197,270 tokens
+   ├─ vs YAML          (−4.5%)                239,958 tokens
+   └─ vs XML           (−30.2%)               328,191 tokens
 ```
 
 #### Flat-Only Track
@@ -60,19 +60,19 @@ Datasets with flat tabular structures where CSV is applicable.
 
 ⭐ Top 100 GitHub repositories  ┊  Tabular: 100%
    │
-   CSV                 ███████████████████░     8,513 tokens
-   TOON                ████████████████████     8,745 tokens   (+2.7% vs CSV)
-   ├─ vs JSON          (−42.3%)                15,145 tokens
-   ├─ vs JSON compact  (−23.7%)                11,455 tokens
-   ├─ vs YAML          (−33.4%)                13,129 tokens
-   └─ vs XML           (−48.8%)                17,095 tokens
+   CSV                 ███████████████████░     8,512 tokens
+   TOON                ████████████████████     8,744 tokens   (+2.7% vs CSV)
+   ├─ vs JSON          (−42.3%)                15,144 tokens
+   ├─ vs JSON compact  (−23.7%)                11,454 tokens
+   ├─ vs YAML          (−33.4%)                13,128 tokens
+   └─ vs XML           (−48.9%)                17,095 tokens
 
 ──────────────────────────────────── Total ────────────────────────────────────
-   CSV                 ███████████████████░    63,855 tokens
-   TOON                ████████████████████    67,696 tokens   (+6.0% vs CSV)
-   ├─ vs JSON          (−58.8%)               164,255 tokens
-   ├─ vs JSON compact  (−35.2%)               104,527 tokens
-   ├─ vs YAML          (−48.2%)               130,698 tokens
+   CSV                 ███████████████████░    63,854 tokens
+   TOON                ████████████████████    67,695 tokens   (+6.0% vs CSV)
+   ├─ vs JSON          (−58.8%)               164,254 tokens
+   ├─ vs JSON compact  (−35.2%)               104,526 tokens
+   ├─ vs YAML          (−48.2%)               130,697 tokens
    └─ vs XML           (−64.4%)               190,160 tokens
 ```
 
@@ -149,7 +149,7 @@ metrics[5]{date,views,clicks,conversions,revenue,bounceRate}:
 
 **Savings:** 6,400 tokens (42.3% reduction vs JSON)
 
-**JSON** (15,145 tokens):
+**JSON** (15,144 tokens):
 
 ```json
 {
@@ -197,7 +197,7 @@ metrics[5]{date,views,clicks,conversions,revenue,bounceRate}:
 }
 ```
 
-**TOON** (8,745 tokens):
+**TOON** (8,744 tokens):
 
 ```
 repositories[3]{id,name,repo,description,createdAt,updatedAt,pushedAt,stars,watchers,forks,defaultBranch}:
