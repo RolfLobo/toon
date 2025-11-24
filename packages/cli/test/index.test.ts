@@ -8,6 +8,8 @@ import { createCliTestContext, mockStdin, runCli } from './utils'
 describe('toon CLI', () => {
   beforeEach(() => {
     vi.spyOn(process, 'exit').mockImplementation(() => 0 as never)
+    vi.spyOn(console, 'log').mockImplementation(() => undefined)
+    vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
   })
 
   afterEach(() => {
