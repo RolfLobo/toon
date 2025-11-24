@@ -114,8 +114,8 @@ importers:
   packages/toon:
     devDependencies:
       '@toon-format/spec':
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^3.0.0
+        version: 3.0.0
 
 packages:
 
@@ -1149,8 +1149,8 @@ packages:
     peerDependencies:
       eslint: '>=9.0.0'
 
-  '@toon-format/spec@2.1.0':
-    resolution: {integrity: sha512-fcnEjmzdJR5/4hnJ8ikn95PjFkp5mM08N/rphrXvgZosFPVKXZ7/l3pjOBatvsmYKPbNb1qLHgoKNLULlr+xow==}
+  '@toon-format/spec@3.0.0':
+    resolution: {integrity: sha512-Xm22jj7TpirgQRlQOAjLMKxRLJfz0Q/BkOdV6d27mHnJ1VQxzDV54Rl03zsFtY3D8wk7t04CV/PS/KjVs2Ys7Q==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -4263,7 +4263,7 @@ snapshots:
       estraverse: 5.3.0
       picomatch: 4.0.3
 
-  '@toon-format/spec@2.1.0': {}
+  '@toon-format/spec@3.0.0': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
