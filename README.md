@@ -870,12 +870,12 @@ Comprehensive guides, references, and resources to help you get the most out of 
 
 - [API Reference](https://toonformat.dev/reference/api) – TypeScript/JavaScript encode/decode API
 - [Syntax Cheatsheet](https://toonformat.dev/reference/syntax-cheatsheet) – Quick format lookup
-- [Specification v2.1](https://github.com/toon-format/spec/blob/main/SPEC.md) – Normative rules for implementers
+- [Specification](https://github.com/toon-format/spec/blob/main/SPEC.md) – Normative rules for implementers
 
 ## Other Implementations
 
 > [!NOTE]
-> When implementing TOON in other languages, please follow the [Specification](https://github.com/toon-format/spec/blob/main/SPEC.md) (currently v2.1) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementations.
+> When implementing TOON in other languages, please follow the [Specification](https://github.com/toon-format/spec/blob/main/SPEC.md) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementations.
 
 ### Official Implementations
 
@@ -885,8 +885,9 @@ Comprehensive guides, references, and resources to help you get the most out of 
 - **.NET:** [toon_format](https://github.com/toon-format/toon-dotnet) *(in development)*
 - **Dart:** [toon](https://github.com/toon-format/toon-dart) *(in development)*
 - **Go:** [toon-go](https://github.com/toon-format/toon-go) *(in development)*
-- **Python:** [toon_format](https://github.com/toon-format/toon-python) *(in development)*
-- **Rust:** [toon_format](https://github.com/toon-format/toon-rust) *(in development)*
+- **Java:** [JToon](https://github.com/toon-format/toon-java)
+- **Python:** [toon_format](https://github.com/toon-format/toon-python)
+- **Rust:** [toon_format](https://github.com/toon-format/toon-rust)
 
 ### Community Implementations
 
@@ -897,7 +898,6 @@ Comprehensive guides, references, and resources to help you get the most out of 
 - **Elixir:** [toon_ex](https://github.com/kentaro/toon_ex)
 - **Gleam:** [toon_codec](https://github.com/axelbellec/toon_codec)
 - **Go:** [gotoon](https://github.com/alpkeskin/gotoon)
-- **Java:** [JToon](https://github.com/felipestanzani/JToon)
 - **Scala:** [toon4s](https://github.com/vim89/toon4s)
 - **Lua/Neovim:** [toon.nvim](https://github.com/thalesgelinger/toon.nvim)
 - **OCaml:** [ocaml-toon](https://github.com/davesnx/ocaml-toon)
