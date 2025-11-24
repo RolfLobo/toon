@@ -36,14 +36,14 @@ Benchmarks test LLM comprehension across different input formats using 209 data 
 Each format's overall performance, balancing accuracy against token cost:
 
 ```
-TOON           ████████████████████   26.8  │  73.9% acc  │  2,759 tokens
+TOON           ████████████████████   26.9  │  73.9% acc  │  2,744 tokens
 JSON compact   █████████████████░░░   22.9  │  70.7% acc  │  3,081 tokens
 YAML           ██████████████░░░░░░   18.6  │  69.0% acc  │  3,719 tokens
 JSON           ███████████░░░░░░░░░   15.3  │  69.7% acc  │  4,545 tokens
 XML            ██████████░░░░░░░░░░   13.0  │  67.1% acc  │  5,167 tokens
 ```
 
-TOON achieves **73.9%** accuracy (vs JSON's 69.7%) while using **39.3% fewer tokens**.
+TOON achieves **73.9%** accuracy (vs JSON's 69.7%) while using **39.6% fewer tokens**.
 
 **Note on CSV:** Excluded from ranking as it only supports 109 of 209 questions (flat tabular data only). While CSV is highly token-efficient for simple tabular data, it cannot represent nested structures that other formats handle.
 
@@ -86,7 +86,7 @@ grok-4-fast-non-reasoning
 ```
 
 > [!TIP] Results Summary
-> TOON achieves **73.9% accuracy** (vs JSON's 69.7%) while using **39.3% fewer tokens** on these datasets.
+> TOON achieves **73.9% accuracy** (vs JSON's 69.7%) while using **39.6% fewer tokens** on these datasets.
 
 <details>
 <summary><strong>Performance by dataset, model, and question type</strong></summary>
@@ -118,7 +118,7 @@ grok-4-fast-non-reasoning
 
 | Format | Accuracy | Tokens | Correct/Total |
 | ------ | -------- | ------ | ------------- |
-| `toon` | 81.1% | 7,282 | 133/164 |
+| `toon` | 81.1% | 7,232 | 133/164 |
 | `json-compact` | 76.8% | 6,794 | 126/164 |
 | `yaml` | 75.6% | 8,347 | 124/164 |
 | `json-pretty` | 76.2% | 10,713 | 125/164 |
@@ -151,7 +151,7 @@ grok-4-fast-non-reasoning
 | Format | Accuracy | Tokens | Correct/Total |
 | ------ | -------- | ------ | ------------- |
 | `json-compact` | 63.3% | 4,819 | 76/120 |
-| `toon` | 57.5% | 5,874 | 69/120 |
+| `toon` | 57.5% | 5,799 | 69/120 |
 | `json-pretty` | 59.2% | 6,797 | 71/120 |
 | `yaml` | 48.3% | 5,827 | 58/120 |
 | `xml` | 46.7% | 7,709 | 56/120 |
@@ -161,7 +161,7 @@ grok-4-fast-non-reasoning
 | Format | Accuracy | Tokens | Correct/Total |
 | ------ | -------- | ------ | ------------- |
 | `json-compact` | 92.2% | 574 | 107/116 |
-| `toon` | 95.7% | 671 | 111/116 |
+| `toon` | 95.7% | 666 | 111/116 |
 | `yaml` | 91.4% | 686 | 106/116 |
 | `json-pretty` | 94.0% | 932 | 109/116 |
 | `xml` | 92.2% | 1,018 | 107/116 |
@@ -205,7 +205,7 @@ grok-4-fast-non-reasoning
 | ------ | -------- | ------ | ------------- |
 | `csv` | 75.0% | 489 | 3/4 |
 | `yaml` | 100.0% | 996 | 4/4 |
-| `toon` | 100.0% | 1,039 | 4/4 |
+| `toon` | 100.0% | 1,019 | 4/4 |
 | `json-compact` | 75.0% | 790 | 3/4 |
 | `xml` | 100.0% | 1,458 | 4/4 |
 | `json-pretty` | 75.0% | 1,274 | 3/4 |
@@ -216,7 +216,7 @@ grok-4-fast-non-reasoning
 | ------ | -------- | ------ | ------------- |
 | `csv` | 100.0% | 329 | 4/4 |
 | `xml` | 100.0% | 1,411 | 4/4 |
-| `toon` | 75.0% | 1,003 | 3/4 |
+| `toon` | 75.0% | 983 | 3/4 |
 | `yaml` | 25.0% | 960 | 1/4 |
 | `json-pretty` | 25.0% | 1,230 | 1/4 |
 | `json-compact` | 0.0% | 755 | 0/4 |
