@@ -9,7 +9,7 @@ You don't need this page to *use* TOON. It's mainly for implementers and contrib
 
 ## Current Version
 
-**Spec v{{ $spec.version }}** (2025-11-10) is the current stable version.
+**Spec v{{ $spec.version }}** (2025-11-23) is the current stable version.
 
 The spec defines a provisional media type and file extension in §18.2:
 

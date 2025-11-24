@@ -411,9 +411,45 @@ function* decodeListItemSync(
   let afterHyphen: string
 
   if (line.content === LIST_ITEM_MARKER) {
-    yield { type: 'startObject' }
-    yield { type: 'endObject' }
-    return
+    // Bare list item marker: either an empty object or fields at depth +1
+    const followDepth = baseDepth + 1
+    const nextLine = cursor.peekSync()
+
+    if (!nextLine || nextLine.depth < followDepth) {
+      // No fields at the next depth: treat as empty object
+      yield { type: 'startObject' }
+      yield { type: 'endObject' }
+      return
+    }
+
+    if (nextLine.depth === followDepth && !nextLine.content.startsWith(LIST_ITEM_PREFIX)) {
+      // Fields at depth +1: parse them as an object
+      yield { type: 'startObject' }
+
+      while (!cursor.atEndSync()) {
+        const fieldLine = cursor.peekSync()
+        if (!fieldLine || fieldLine.depth < followDepth) {
+          break
+        }
+
+        if (fieldLine.depth === followDepth && !fieldLine.content.startsWith(LIST_ITEM_PREFIX)) {
+          cursor.advanceSync()
+          yield* decodeKeyValueSync(fieldLine.content, cursor, followDepth, options)
+        }
+        else {
+          break
+        }
+      }
+
+      yield { type: 'endObject' }
+      return
+    }
+    else {
+      // Next line is another list item or at a different depth: treat as empty object
+      yield { type: 'startObject' }
+      yield { type: 'endObject' }
+      return
+    }
   }
   else if (line.content.startsWith(LIST_ITEM_PREFIX)) {
     afterHyphen = line.content.slice(LIST_ITEM_PREFIX.length)
@@ -509,7 +545,7 @@ export async function* decodeStream(
     // Get first line to determine root form
     const first = await cursor.peek()
     if (!first) {
-      // Empty input decodes to empty object (matches decode('') behavior)
+      // Empty input decodes to empty object
       yield { type: 'startObject' }
       yield { type: 'endObject' }
       return
@@ -770,9 +806,45 @@ async function* decodeListItemAsync(
   let afterHyphen: string
 
   if (line.content === LIST_ITEM_MARKER) {
-    yield { type: 'startObject' }
-    yield { type: 'endObject' }
-    return
+    // Bare list item marker: either an empty object or fields at depth +1
+    const followDepth = baseDepth + 1
+    const nextLine = await cursor.peek()
+
+    if (!nextLine || nextLine.depth < followDepth) {
+      // No fields at the next depth: treat as empty object
+      yield { type: 'startObject' }
+      yield { type: 'endObject' }
+      return
+    }
+
+    if (nextLine.depth === followDepth && !nextLine.content.startsWith(LIST_ITEM_PREFIX)) {
+      // Fields at depth +1: parse them as an object
+      yield { type: 'startObject' }
+
+      while (!cursor.atEnd()) {
+        const fieldLine = await cursor.peek()
+        if (!fieldLine || fieldLine.depth < followDepth) {
+          break
+        }
+
+        if (fieldLine.depth === followDepth && !fieldLine.content.startsWith(LIST_ITEM_PREFIX)) {
+          await cursor.advance()
+          yield* decodeKeyValueAsync(fieldLine.content, cursor, followDepth, options)
+        }
+        else {
+          break
+        }
+      }
+
+      yield { type: 'endObject' }
+      return
+    }
+    else {
+      // Next line is another list item or at a different depth: treat as empty object
+      yield { type: 'startObject' }
+      yield { type: 'endObject' }
+      return
+    }
   }
   else if (line.content.startsWith(LIST_ITEM_PREFIX)) {
     afterHyphen = line.content.slice(LIST_ITEM_PREFIX.length)

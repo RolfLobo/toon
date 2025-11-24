@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/toon-format/toon/actions/workflows/ci.yml/badge.svg)](https://github.com/toon-format/toon/actions)
 [![npm version](https://img.shields.io/npm/v/@toon-format/toon.svg)](https://www.npmjs.com/package/@toon-format/toon)
-[![SPEC v2.0](https://img.shields.io/badge/spec-v2.0-lightgray)](https://github.com/toon-format/spec)
+[![SPEC v2.1](https://img.shields.io/badge/spec-v2.1-lightgray)](https://github.com/toon-format/spec)
 [![npm downloads (total)](https://img.shields.io/npm/dt/@toon-format/toon.svg)](https://www.npmjs.com/package/@toon-format/toon)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
@@ -872,12 +872,12 @@ Comprehensive guides, references, and resources to help you get the most out of 
 
 - [API Reference](https://toonformat.dev/reference/api) – TypeScript/JavaScript encode/decode API
 - [Syntax Cheatsheet](https://toonformat.dev/reference/syntax-cheatsheet) – Quick format lookup
-- [Specification v2.0](https://github.com/toon-format/spec/blob/main/SPEC.md) – Normative rules for implementers
+- [Specification v2.1](https://github.com/toon-format/spec/blob/main/SPEC.md) – Normative rules for implementers
 
 ## Other Implementations
 
 > [!NOTE]
-> When implementing TOON in other languages, please follow the [Specification](https://github.com/toon-format/spec/blob/main/SPEC.md) (currently v2.0) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementations.
+> When implementing TOON in other languages, please follow the [Specification](https://github.com/toon-format/spec/blob/main/SPEC.md) (currently v2.1) to ensure compatibility across implementations. The [conformance tests](https://github.com/toon-format/spec/tree/main/tests) provide language-agnostic test fixtures that validate your implementations.
 
 ### Official Implementations
 

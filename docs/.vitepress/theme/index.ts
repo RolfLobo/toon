@@ -10,7 +10,7 @@ const config: Theme = {
   extends: DefaultTheme,
   enhanceApp({ app }) {
     app.config.globalProperties.$spec = {
-      version: '2.0',
+      version: '2.1',
     }
     app.component('CopyOrDownloadAsMarkdownButtons', CopyOrDownloadAsMarkdownButtons)
   },
