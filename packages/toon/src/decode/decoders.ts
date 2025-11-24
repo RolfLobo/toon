@@ -473,10 +473,42 @@ function* decodeListItemSync(
     }
   }
 
+  // Check for tabular-first list-item object: `- key[N]{fields}:`
+  const headerInfo = parseArrayHeaderLine(afterHyphen, DEFAULT_DELIMITER)
+  if (headerInfo && headerInfo.header.key && headerInfo.header.fields) {
+    // Object with tabular array as first field
+    const header = headerInfo.header
+    yield { type: 'startObject' }
+    yield { type: 'key', key: header.key! }
+
+    // Use baseDepth + 1 for the array so rows are at baseDepth + 2
+    yield* decodeArrayFromHeaderSync(header, headerInfo.inlineValues, cursor, baseDepth + 1, options)
+
+    // Read sibling fields at depth = baseDepth + 1
+    const followDepth = baseDepth + 1
+    while (!cursor.atEndSync()) {
+      const nextLine = cursor.peekSync()
+      if (!nextLine || nextLine.depth < followDepth) {
+        break
+      }
+
+      if (nextLine.depth === followDepth && !nextLine.content.startsWith(LIST_ITEM_PREFIX)) {
+        cursor.advanceSync()
+        yield* decodeKeyValueSync(nextLine.content, cursor, followDepth, options)
+      }
+      else {
+        break
+      }
+    }
+
+    yield { type: 'endObject' }
+    return
+  }
+
   // Check for object first field after hyphen
   if (isKeyValueContent(afterHyphen)) {
     yield { type: 'startObject' }
-    yield* decodeKeyValueSync(afterHyphen, cursor, baseDepth, options)
+    yield* decodeKeyValueSync(afterHyphen, cursor, baseDepth + 1, options)
 
     // Read subsequent fields
     const followDepth = baseDepth + 1
@@ -868,10 +900,42 @@ async function* decodeListItemAsync(
     }
   }
 
+  // Check for tabular-first list-item object: `- key[N]{fields}:`
+  const headerInfo = parseArrayHeaderLine(afterHyphen, DEFAULT_DELIMITER)
+  if (headerInfo && headerInfo.header.key && headerInfo.header.fields) {
+    // Object with tabular array as first field
+    const header = headerInfo.header
+    yield { type: 'startObject' }
+    yield { type: 'key', key: header.key! }
+
+    // Use baseDepth + 1 for the array so rows are at baseDepth + 2
+    yield* decodeArrayFromHeaderAsync(header, headerInfo.inlineValues, cursor, baseDepth + 1, options)
+
+    // Read sibling fields at depth = baseDepth + 1
+    const followDepth = baseDepth + 1
+    while (!(await cursor.atEnd())) {
+      const nextLine = await cursor.peek()
+      if (!nextLine || nextLine.depth < followDepth) {
+        break
+      }
+
+      if (nextLine.depth === followDepth && !nextLine.content.startsWith(LIST_ITEM_PREFIX)) {
+        await cursor.advance()
+        yield* decodeKeyValueAsync(nextLine.content, cursor, followDepth, options)
+      }
+      else {
+        break
+      }
+    }
+
+    yield { type: 'endObject' }
+    return
+  }
+
   // Check for object first field after hyphen
   if (isKeyValueContent(afterHyphen)) {
     yield { type: 'startObject' }
-    yield* decodeKeyValueAsync(afterHyphen, cursor, baseDepth, options)
+    yield* decodeKeyValueAsync(afterHyphen, cursor, baseDepth + 1, options)
 
     // Read subsequent fields
     const followDepth = baseDepth + 1

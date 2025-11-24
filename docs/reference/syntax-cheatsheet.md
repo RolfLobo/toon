@@ -97,6 +97,28 @@ items[3]:
 
 :::
 
+> [!NOTE]
+> When a list-item object has a tabular array as its first field, the tabular header appears on the hyphen line. Rows are indented two levels deeper than the hyphen, and other fields are indented one level deeper. This is the canonical encoding for this pattern.
+
+::: code-group
+
+```yaml [Multi-field object]
+items[1]:
+  - users[2]{id,name}:
+      1,Ada
+      2,Bob
+    status: active
+```
+
+```yaml [Single-field object]
+items[1]:
+  - users[2]{id,name}:
+      1,Ada
+      2,Bob
+```
+
+:::
+
 ## Arrays of Arrays
 
 ::: code-group
