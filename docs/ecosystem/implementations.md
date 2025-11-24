@@ -16,8 +16,9 @@ These implementations are actively being developed by dedicated teams. Contribut
 | **.NET** | [toon-dotnet](https://github.com/toon-format/toon-dotnet) | In Development | Official Team |
 | **Dart** | [toon-dart](https://github.com/toon-format/toon-dart) | In Development | Official Team |
 | **Go** | [toon-go](https://github.com/toon-format/toon-go) | In Development | Official Team |
-| **Python** | [toon-python](https://github.com/toon-format/toon-python) | In Development | Official Team |
-| **Rust** | [toon-rust](https://github.com/toon-format/toon-rust) | In Development | Official Team |
+| **Java** | [toon-java](https://github.com/toon-format/toon-java) | ✅ Stable | Official Team |
+| **Python** | [toon-python](https://github.com/toon-format/toon-python) | ✅ Stable | Official Team |
+| **Rust** | [toon-rust](https://github.com/toon-format/toon-rust) | ✅ Stable | Official Team |
 | **TypeScript/JavaScript** | [toon](https://github.com/toon-format/toon/tree/main/packages/toon) | ✅ Stable | Official Team |
 
 ## Community Implementations
@@ -33,7 +34,6 @@ Community members have created implementations in additional languages:
 | **Elixir** | [toon_ex](https://github.com/kentaro/toon_ex) | [@kentaro](https://github.com/kentaro) |
 | **Gleam** | [toon_codec](https://github.com/axelbellec/toon_codec) | [@axelbellec](https://github.com/axelbellec) |
 | **Go** | [gotoon](https://github.com/alpkeskin/gotoon) | [@alpkeskin](https://github.com/alpkeskin) |
-| **Java** | [JToon](https://github.com/felipestanzani/JToon) | [@felipestanzani](https://github.com/felipestanzani) |
 | **Kotlin** | [kotlin-toon](https://github.com/vexpera-br/kotlin-toon) | [@vexpera-br](https://github.com/vexpera-br) |
 | **Laravel Framework** | [laravel-toon](https://github.com/jobmetric/laravel-toon) | [@jobmetric](https://github.com/jobmetric) |
 | **Lua/Neovim** | [toon.nvim](https://github.com/thalesgelinger/toon.nvim) | [@thalesgelinger](https://github.com/thalesgelinger) |
