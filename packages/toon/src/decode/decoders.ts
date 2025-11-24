@@ -1,4 +1,4 @@
-import type { ArrayHeaderInfo, DecodeStreamOptions, Depth, JsonStreamEvent, ParsedLine } from '../types'
+import type { ArrayHeaderInfo, DecodeStreamOptions, Depth, JsonPrimitive, JsonStreamEvent, ParsedLine } from '../types'
 import type { StreamingScanState } from './scanner'
 import { COLON, DEFAULT_DELIMITER, LIST_ITEM_MARKER, LIST_ITEM_PREFIX } from '../constants'
 import { findClosingQuote } from '../shared/string-utils'
@@ -320,13 +320,7 @@ function* decodeTabularArraySync(
       assertExpectedCount(values.length, header.fields!.length, 'tabular row values', options)
 
       const primitives = mapRowValuesToPrimitives(values)
-
-      yield { type: 'startObject' }
-      for (let i = 0; i < header.fields!.length; i++) {
-        yield { type: 'key', key: header.fields![i]! }
-        yield { type: 'primitive', value: primitives[i]! }
-      }
-      yield { type: 'endObject' }
+      yield* yieldObjectFromFields(header.fields!, primitives)
 
       rowCount++
     }
@@ -747,13 +741,7 @@ async function* decodeTabularArrayAsync(
       assertExpectedCount(values.length, header.fields!.length, 'tabular row values', options)
 
       const primitives = mapRowValuesToPrimitives(values)
-
-      yield { type: 'startObject' }
-      for (let i = 0; i < header.fields!.length; i++) {
-        yield { type: 'key', key: header.fields![i]! }
-        yield { type: 'primitive', value: primitives[i]! }
-      }
-      yield { type: 'endObject' }
+      yield* yieldObjectFromFields(header.fields!, primitives)
 
       rowCount++
     }
@@ -960,6 +948,22 @@ async function* decodeListItemAsync(
 
   // Primitive value
   yield { type: 'primitive', value: parsePrimitiveToken(afterHyphen) }
+}
+
+// #endregion
+
+// #region Shared decoder helpers
+
+function* yieldObjectFromFields(
+  fields: string[],
+  primitives: JsonPrimitive[],
+): Generator<JsonStreamEvent> {
+  yield { type: 'startObject' }
+  for (let i = 0; i < fields.length; i++) {
+    yield { type: 'key', key: fields[i]! }
+    yield { type: 'primitive', value: primitives[i]! }
+  }
+  yield { type: 'endObject' }
 }
 
 // #endregion
