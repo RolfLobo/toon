@@ -787,7 +787,13 @@ for (const line of encodeLines(largeData)) {
 
 ## Playgrounds
 
-Experiment with TOON format interactively using these community-built tools for token comparison, format conversion, and validation:
+Experiment with TOON format interactively using these tools for token comparison, format conversion, and validation.
+
+### Official Playground
+
+The [TOON Playground](https://toonformat.dev/playground) lets you convert JSON to TOON in real-time, compare token counts, and share your experiments via URL.
+
+### Community Playgrounds
 
 - [Format Tokenization Playground](https://www.curiouslychase.com/playground/format-tokenization-exploration)
 - [TOON Tools](https://toontools.vercel.app/)
