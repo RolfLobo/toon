@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Delimiter } from '../../../../packages/toon/src'
 import { useClipboard, useDebounceFn } from '@vueuse/core'
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string'
+import { unzlibSync, zlibSync } from 'fflate'
+import { base64ToUint8Array, stringToUint8Array, uint8ArrayToBase64, uint8ArrayToString } from 'uint8array-extras'
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { DEFAULT_DELIMITER, encode } from '../../../../packages/toon/src'
 import VPInput from './VPInput.vue'
@@ -119,12 +120,15 @@ function encodeState() {
     indent: indent.value,
   }
 
-  return compressToEncodedURIComponent(JSON.stringify(state))
+  const compressedData = zlibSync(stringToUint8Array(JSON.stringify(state)))
+  return uint8ArrayToBase64(compressedData, { urlSafe: true })
 }
 
 function decodeState(hash: string) {
   try {
-    const decodedData = decompressFromEncodedURIComponent(hash)
+    const bytes = base64ToUint8Array(hash)
+    const decompressedData = unzlibSync(bytes)
+    const decodedData = uint8ArrayToString(decompressedData)
     if (decodedData)
       return JSON.parse(decodedData) as PlaygroundState
   }
