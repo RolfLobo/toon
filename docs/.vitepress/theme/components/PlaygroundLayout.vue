@@ -237,15 +237,16 @@ async function loadTokenizer() {
               <span>{{ toonTokens ?? '...' }} tokens</span>
               <span>{{ toonOutput.length }} chars</span>
             </span>
+          </div>
+          <div class="editor-output">
             <button
               class="copy-button"
+              :class="{ copied }"
               :disabled="!!error"
               :aria-label="copied ? 'Copied to clipboard' : 'Copy to clipboard'"
               :aria-pressed="copied"
               @click="copy()"
             />
-          </div>
-          <div class="editor-output">
             <pre v-if="!error"><code>{{ toonOutput }}</code></pre>
             <div v-else id="json-error" role="alert" class="error-message">
               {{ error }}
@@ -436,17 +437,33 @@ async function loadTokenizer() {
 }
 
 .copy-button {
-  width: 20px;
-  height: 20px;
-  background: var(--vp-icon-copy) center / 16px no-repeat;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  border: 1px solid var(--vp-code-copy-code-border-color);
   border-radius: 4px;
-  opacity: 0.6;
-  transition: opacity 0.25s, background-color 0.25s;
+  width: 40px;
+  height: 40px;
+  background-color: var(--vp-code-copy-code-bg);
+  opacity: 0;
+  cursor: pointer;
+  background-image: var(--vp-icon-copy);
+  background-position: 50%;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  transition: border-color 0.25s, background-color 0.25s, opacity 0.25s;
 }
 
-.copy-button:hover:not(:disabled) {
+.editor-output:hover .copy-button,
+.copy-button:focus {
   opacity: 1;
-  background-color: var(--vp-c-default-soft);
+}
+
+.copy-button:hover:not(:disabled),
+.copy-button.copied {
+  border-color: var(--vp-code-copy-code-hover-border-color);
+  background-color: var(--vp-code-copy-code-hover-bg);
 }
 
 .copy-button:focus-visible {
@@ -459,8 +476,36 @@ async function loadTokenizer() {
   cursor: not-allowed;
 }
 
-.copy-button[aria-pressed="true"] {
+.copy-button.copied,
+.copy-button:hover.copied {
+  border-radius: 0 4px 4px 0;
   background-image: var(--vp-icon-copied);
+}
+
+.copy-button.copied::before,
+.copy-button:hover.copied::before {
+  position: relative;
+  top: -1px;
+  transform: translateX(calc(-100% - 1px));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--vp-code-copy-code-hover-border-color);
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+  padding: 0 10px;
+  width: fit-content;
+  height: 40px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vp-code-copy-code-active-text);
+  background-color: var(--vp-code-copy-code-hover-bg);
+  white-space: nowrap;
+  content: var(--vp-code-copy-copied-text-content);
+}
+
+.copy-button[aria-pressed="true"] {
   opacity: 1;
 }
 
@@ -480,6 +525,7 @@ async function loadTokenizer() {
 }
 
 .editor-output {
+  position: relative;
   overflow: auto;
   background: var(--vp-code-block-bg);
 }
