@@ -783,7 +783,7 @@ for (const line of encodeLines(largeData)) {
 ```
 
 > [!TIP]
-> For streaming decode APIs, see [`decodeFromLines()`](/reference/api#decodeFromLines-lines-options) and [`decodeStream()`](/reference/api#decodeStream-source-options).
+> For streaming decode APIs, see [`decodeFromLines()`](https://toonformat.dev/reference/api#decodefromlines-lines-options) and [`decodeStream()`](https://toonformat.dev/reference/api#decodestream-source-options).
 
 ## Playgrounds
 
