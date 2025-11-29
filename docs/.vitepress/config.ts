@@ -33,6 +33,10 @@ export default defineConfig({
 
     nav: [
       {
+        text: 'Playground',
+        link: '/playground',
+      },
+      {
         text: 'Guide',
         activeMatch: '^/guide/',
         items: [
@@ -117,6 +121,7 @@ function sidebarPrimary(): DefaultTheme.SidebarItem[] {
     {
       text: 'Tooling',
       items: [
+        { text: 'Playground', link: '/playground' },
         { text: 'CLI Reference', link: '/cli/' },
         { text: 'Tools & Playgrounds', link: '/ecosystem/tools-and-playgrounds' },
       ],
