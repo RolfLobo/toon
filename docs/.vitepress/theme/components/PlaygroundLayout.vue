@@ -305,20 +305,18 @@ async function loadTokenizer() {
 
 <style scoped>
 .playground {
-  padding: 32px 24px 96px;
-  min-height: 100vh;
-  background: var(--vp-c-bg);
+  padding: 32px 24px 32px;
 }
 
 @media (min-width: 768px) {
   .playground {
-    padding: 48px 32px 128px;
+    padding: 48px 32px 48px;
   }
 }
 
 @media (min-width: 960px) {
   .playground {
-    padding: 48px 32px 0;
+    padding: 48px 32px 48px;
   }
 }
 
@@ -415,7 +413,6 @@ async function loadTokenizer() {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  min-height: 500px;
 }
 
 @media (max-width: 768px) {
@@ -427,11 +424,18 @@ async function loadTokenizer() {
 .editor-pane {
   display: flex;
   flex-direction: column;
+  min-height: 500px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
   overflow: hidden;
   background: var(--vp-c-bg-soft);
   transition: border-color 0.25s;
+}
+
+@media (max-width: 768px) {
+  .editor-pane {
+    min-height: 400px;
+  }
 }
 
 .editor-pane:focus-within {
@@ -583,8 +587,7 @@ async function loadTokenizer() {
 
 .editor-output pre {
   margin: 0;
-  white-space: pre-wrap;
-  word-break: break-all;
+  white-space: pre;
 }
 
 .error-message {
