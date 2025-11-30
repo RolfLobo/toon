@@ -14,25 +14,65 @@ interface PlaygroundState {
 }
 
 const PRESETS = {
-  users: [
-    { id: 1, name: 'Alice', role: 'admin' },
-    { id: 2, name: 'Bob', role: 'user' },
-  ],
-  config: {
-    app: { name: 'MyApp', version: '1.0.0' },
-    features: { darkMode: true, notifications: false },
+  hikes: {
+    context: {
+      task: 'Our favorite hikes together',
+      location: 'Boulder',
+      season: 'spring_2025',
+    },
+    friends: ['ana', 'luis', 'sam'],
+    hikes: [
+      { id: 1, name: 'Blue Lake Trail', distanceKm: 7.5, elevationGain: 320, companion: 'ana', wasSunny: true },
+      { id: 2, name: 'Ridge Overlook', distanceKm: 9.2, elevationGain: 540, companion: 'luis', wasSunny: false },
+      { id: 3, name: 'Wildflower Loop', distanceKm: 5.1, elevationGain: 180, companion: 'sam', wasSunny: true },
+    ],
   },
-  products: [
-    { sku: 'A1', name: 'Widget', price: 9.99, qty: 100 },
-    { sku: 'B2', name: 'Gadget', price: 14.5, qty: 50 },
-  ],
+  orders: {
+    orders: [
+      {
+        orderId: 'ORD-001',
+        customer: { name: 'Alice Chen', email: 'alice@example.com' },
+        items: [
+          { sku: 'WIDGET-A', quantity: 2, price: 29.99 },
+          { sku: 'GADGET-B', quantity: 1, price: 49.99 },
+        ],
+        total: 109.97,
+        status: 'shipped',
+      },
+      {
+        orderId: 'ORD-002',
+        customer: { name: 'Bob Smith', email: 'bob@example.com' },
+        items: [
+          { sku: 'THING-C', quantity: 3, price: 15.00 },
+        ],
+        total: 45.00,
+        status: 'delivered',
+      },
+    ],
+  },
+  metrics: {
+    metrics: [
+      { date: '2025-01-01', views: 5200, clicks: 180, conversions: 24, revenue: 2890.50 },
+      { date: '2025-01-02', views: 6100, clicks: 220, conversions: 31, revenue: 3450.00 },
+      { date: '2025-01-03', views: 4800, clicks: 165, conversions: 19, revenue: 2100.25 },
+      { date: '2025-01-04', views: 5900, clicks: 205, conversions: 28, revenue: 3200.00 },
+    ],
+  },
+  events: {
+    logs: [
+      { timestamp: '2025-01-15T10:23:45Z', level: 'info', endpoint: '/api/users', statusCode: 200, responseTime: 45 },
+      { timestamp: '2025-01-15T10:24:12Z', level: 'error', endpoint: '/api/orders', statusCode: 500, responseTime: 120, error: { message: 'Database timeout', retryable: true } },
+      { timestamp: '2025-01-15T10:25:03Z', level: 'info', endpoint: '/api/products', statusCode: 200, responseTime: 32 },
+      { timestamp: '2025-01-15T10:26:47Z', level: 'warn', endpoint: '/api/payment', statusCode: 429, responseTime: 5, error: { message: 'Rate limit exceeded', retryable: true } },
+    ],
+  },
 } as const
 const DELIMITER_OPTIONS: { value: Delimiter, label: string }[] = [
   { value: ',', label: 'Comma (,)' },
   { value: '\t', label: 'Tab (\\t)' },
   { value: '|', label: 'Pipe (|)' },
 ]
-const DEFAULT_JSON = JSON.stringify(PRESETS.users, undefined, 2)
+const DEFAULT_JSON = JSON.stringify(PRESETS.hikes, undefined, 2)
 
 const jsonInput = ref(DEFAULT_JSON)
 const delimiter = ref<Delimiter>(DEFAULT_DELIMITER)
@@ -73,9 +113,11 @@ const tokenSavings = computed(() => {
   if (!jsonTokens.value || !toonTokens.value)
     return
 
-  const saved = jsonTokens.value - toonTokens.value
-  const percent = ((saved / jsonTokens.value) * 100).toFixed(1)
-  return { saved, percent }
+  const diff = jsonTokens.value - toonTokens.value
+  const percent = Math.abs((diff / jsonTokens.value) * 100).toFixed(1)
+  const sign = diff > 0 ? '−' : '+'
+
+  return { diff, percent, sign, isSavings: diff > 0 }
 })
 
 const { copy, copied } = useClipboard({ source: toonOutput })
@@ -178,25 +220,28 @@ async function loadTokenizer() {
             <option value="" disabled selected>
               Load example...
             </option>
-            <option value="users">
-              Users
+            <option value="hikes">
+              Hikes (mixed structure)
             </option>
-            <option value="config">
-              Config
+            <option value="orders">
+              Orders (nested objects)
             </option>
-            <option value="products">
-              Products
+            <option value="metrics">
+              Metrics (tabular data)
+            </option>
+            <option value="events">
+              Events (semi-uniform)
             </option>
           </select>
         </VPInput>
 
         <button
           class="share-button"
-          :class="{ copied: hasCopiedUrl }"
+          :class="[hasCopiedUrl && 'copied']"
           :aria-label="hasCopiedUrl ? 'Link copied!' : 'Copy shareable URL'"
           @click="copyShareUrl"
         >
-          <span class="vpi-link" :class="{ check: hasCopiedUrl }" aria-hidden="true" />
+          <span class="vpi-link" :class="[hasCopiedUrl && 'check']" aria-hidden="true" />
           {{ hasCopiedUrl ? 'Copied!' : 'Share' }}
         </button>
       </div>
@@ -229,8 +274,8 @@ async function loadTokenizer() {
           <div class="pane-header">
             <span class="pane-title">
               TOON Output
-              <span v-if="tokenSavings && Number(tokenSavings.percent) > 0" class="savings-badge">
-                −{{ tokenSavings.percent }}%
+              <span v-if="tokenSavings" class="savings-badge" :class="[!tokenSavings.isSavings && 'increase']">
+                {{ tokenSavings.sign }}{{ tokenSavings.percent }}%
               </span>
             </span>
             <span class="pane-stats">
@@ -240,9 +285,9 @@ async function loadTokenizer() {
           </div>
           <div class="editor-output">
             <button
+              v-if="!error"
               class="copy-button"
-              :class="{ copied }"
-              :disabled="!!error"
+              :class="[copied && 'copied']"
               :aria-label="copied ? 'Copied to clipboard' : 'Copy to clipboard'"
               :aria-pressed="copied"
               @click="copy()"
@@ -411,6 +456,7 @@ async function loadTokenizer() {
   color: var(--vp-c-text-2);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  line-height: 1.5;
 }
 
 .pane-stats {
@@ -434,6 +480,11 @@ async function loadTokenizer() {
   border-radius: 4px;
   text-transform: none;
   letter-spacing: normal;
+}
+
+.savings-badge.increase {
+  color: var(--vp-c-yellow-1);
+  background: var(--vp-c-yellow-soft);
 }
 
 .copy-button {
