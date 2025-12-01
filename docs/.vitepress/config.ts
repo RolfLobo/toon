@@ -123,12 +123,12 @@ function sidebarPrimary(): DefaultTheme.SidebarItem[] {
       items: [
         { text: 'Playground', link: '/playground' },
         { text: 'CLI Reference', link: '/cli/' },
-        { text: 'Tools & Playgrounds', link: '/ecosystem/tools-and-playgrounds' },
       ],
     },
     {
       text: 'Ecosystem',
       items: [
+        { text: 'Tools & Playgrounds', link: '/ecosystem/tools-and-playgrounds' },
         { text: 'Implementations', link: '/ecosystem/implementations' },
       ],
     },
