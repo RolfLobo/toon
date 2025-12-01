@@ -785,6 +785,32 @@ for (const line of encodeLines(largeData)) {
 > [!TIP]
 > For streaming decode APIs, see [`decodeFromLines()`](https://toonformat.dev/reference/api#decodefromlines-lines-options) and [`decodeStream()`](https://toonformat.dev/reference/api#decodestream-source-options).
 
+**Transforming values with replacer:**
+
+```ts
+import { encode } from '@toon-format/toon'
+
+// Remove sensitive fields
+const user = { name: 'Alice', password: 'secret', email: 'alice@example.com' }
+const safe = encode(user, {
+  replacer: (key, value) => key === 'password' ? undefined : value
+})
+// name: Alice
+// email: alice@example.com
+
+// Transform values
+const data = { status: 'active', count: 5 }
+const transformed = encode(data, {
+  replacer: (key, value) =>
+    typeof value === 'string' ? value.toUpperCase() : value
+})
+// status: ACTIVE
+// count: 5
+```
+
+> [!TIP]
+> The `replacer` function provides fine-grained control over encoding, similar to `JSON.stringify`'s replacer but with path tracking. See the [API Reference](https://toonformat.dev/reference/api#replacer-function) for more examples.
+
 ## Playgrounds
 
 Experiment with TOON format interactively using these tools for token comparison, format conversion, and validation.
