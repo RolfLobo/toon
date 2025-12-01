@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Delimiter } from '../../../../packages/toon/src'
+import type { Delimiter, EncodeOptions } from '../../../../packages/toon/src'
 import { useClipboard, useDebounceFn } from '@vueuse/core'
 import { unzlibSync, zlibSync } from 'fflate'
 import { base64ToUint8Array, stringToUint8Array, uint8ArrayToBase64, uint8ArrayToString } from 'uint8array-extras'
@@ -7,10 +7,8 @@ import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { DEFAULT_DELIMITER, encode } from '../../../../packages/toon/src'
 import VPInput from './VPInput.vue'
 
-interface PlaygroundState {
+interface PlaygroundState extends Required<Pick<EncodeOptions, 'delimiter' | 'indent' | 'keyFolding' | 'flattenDepth'>> {
   json: string
-  delimiter: Delimiter
-  indent: number
 }
 
 const PRESETS = {
@@ -73,10 +71,15 @@ const DELIMITER_OPTIONS: { value: Delimiter, label: string }[] = [
   { value: '|', label: 'Pipe (|)' },
 ]
 const DEFAULT_JSON = JSON.stringify(PRESETS.hikes, undefined, 2)
+const SHARE_URL_LIMIT = 8 * 1024
 
 const jsonInput = ref(DEFAULT_JSON)
 const delimiter = ref<Delimiter>(DEFAULT_DELIMITER)
 const indent = ref(2)
+const keyFolding = ref<'off' | 'safe'>('safe')
+const flattenDepth = ref(2)
+
+const canShareState = ref(true)
 const hasCopiedUrl = ref(false)
 
 const tokenizer = shallowRef<typeof import('gpt-tokenizer') | undefined>()
@@ -88,14 +91,16 @@ const encodingResult = computed(() => {
       output: encode(parsedInput, {
         indent: indent.value,
         delimiter: delimiter.value,
+        keyFolding: keyFolding.value,
+        flattenDepth: flattenDepth.value,
       }),
       error: undefined,
     }
   }
-  catch (e) {
+  catch (error) {
     return {
       output: '',
-      error: e instanceof Error ? e.message : 'Invalid JSON',
+      error: error instanceof Error ? error.message : 'Invalid JSON',
     }
   }
 })
@@ -123,20 +128,29 @@ const tokenSavings = computed(() => {
 const { copy, copied } = useClipboard({ source: toonOutput })
 
 async function copyShareUrl() {
+  if (!canShareState.value)
+    return
+
   await navigator.clipboard.writeText(window.location.href)
   hasCopiedUrl.value = true
   setTimeout(() => (hasCopiedUrl.value = false), 2000)
 }
 
 const updateUrl = useDebounceFn(() => {
-  if (typeof window === 'undefined')
-    return
-
   const hash = encodeState()
+  const baseUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`
+  const targetUrl = `${baseUrl}#${hash}`
+
+  if (targetUrl.length > SHARE_URL_LIMIT) {
+    canShareState.value = false
+    return
+  }
+
+  canShareState.value = true
   window.history.replaceState(null, '', `#${hash}`)
 }, 300)
 
-watch([jsonInput, delimiter, indent], () => {
+watch([jsonInput, delimiter, indent, keyFolding, flattenDepth], () => {
   updateUrl()
 })
 
@@ -152,6 +166,8 @@ onMounted(() => {
     jsonInput.value = state.json
     delimiter.value = state.delimiter
     indent.value = state.indent
+    keyFolding.value = state.keyFolding ?? 'safe'
+    flattenDepth.value = state.flattenDepth ?? 2
   }
 })
 
@@ -160,6 +176,8 @@ function encodeState() {
     json: jsonInput.value,
     delimiter: delimiter.value,
     indent: indent.value,
+    keyFolding: keyFolding.value,
+    flattenDepth: flattenDepth.value,
   }
 
   const compressedData = zlibSync(stringToUint8Array(JSON.stringify(state)))
@@ -215,6 +233,28 @@ async function loadTokenizer() {
           >
         </VPInput>
 
+        <VPInput id="keyFolding" label="Key Folding">
+          <select id="keyFolding" v-model="keyFolding">
+            <option value="off">
+              Off
+            </option>
+            <option value="safe">
+              Safe
+            </option>
+          </select>
+        </VPInput>
+
+        <VPInput id="flattenDepth" label="Flatten Depth">
+          <input
+            id="flattenDepth"
+            v-model.number="flattenDepth"
+            type="number"
+            min="1"
+            max="10"
+            :disabled="keyFolding === 'off'"
+          >
+        </VPInput>
+
         <VPInput id="preset" label="Preset">
           <select id="preset" @change="(e) => loadPreset((e.target as HTMLSelectElement).value as keyof typeof PRESETS)">
             <option value="" disabled selected>
@@ -238,11 +278,25 @@ async function loadTokenizer() {
         <button
           class="share-button"
           :class="[hasCopiedUrl && 'copied']"
-          :aria-label="hasCopiedUrl ? 'Link copied!' : 'Copy shareable URL'"
+          :aria-label="
+            !canShareState
+              ? 'State too large to share via URL'
+              : hasCopiedUrl
+                ? 'Link copied!'
+                : 'Copy shareable URL'
+          "
+          :title="!canShareState ? 'State too large to share via URL' : undefined"
+          :disabled="!canShareState"
+          :aria-disabled="!canShareState"
           @click="copyShareUrl"
         >
           <span class="vpi-link" :class="[hasCopiedUrl && 'check']" aria-hidden="true" />
-          {{ hasCopiedUrl ? 'Copied!' : 'Share' }}
+          <template v-if="!canShareState">
+            Too large to share
+          </template>
+          <template v-else>
+            {{ hasCopiedUrl ? 'Copied!' : 'Share' }}
+          </template>
         </button>
       </div>
 
@@ -362,6 +416,12 @@ async function loadTokenizer() {
   border: 1px solid var(--vp-c-divider);
 }
 
+@media (max-width: 768px) {
+  .options-bar {
+    gap: 8px;
+  }
+}
+
 .vpi-link {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
   display: inline-block;
@@ -407,6 +467,13 @@ async function loadTokenizer() {
 .share-button.copied {
   border-color: var(--vp-c-green-1);
   color: var(--vp-c-green-1);
+}
+
+.share-button:disabled {
+  color: var(--vp-c-text-3);
+  border-color: var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
+  cursor: not-allowed;
 }
 
 .editor-container {

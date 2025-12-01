@@ -47,6 +47,21 @@ defineProps<{
   border-color: var(--vp-c-brand-1);
 }
 
+.input-wrapper :deep(select:disabled),
+.input-wrapper :deep(input:disabled) {
+  color: var(--vp-c-text-3);
+  background-color: var(--vp-c-bg-soft);
+  border-color: var(--vp-c-divider);
+  cursor: not-allowed;
+}
+
+.input-wrapper :deep(select:disabled):hover,
+.input-wrapper :deep(input:disabled):hover,
+.input-wrapper :deep(select:disabled):focus,
+.input-wrapper :deep(input:disabled):focus {
+  border-color: var(--vp-c-divider);
+}
+
 .input-wrapper :deep(input[type="number"]) {
   width: 70px;
 }
