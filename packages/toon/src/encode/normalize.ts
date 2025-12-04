@@ -8,6 +8,20 @@ export function normalizeValue(value: unknown): JsonValue {
     return null
   }
 
+  // Objects with toJSON: delegate to its result before host-type normalization
+  if (
+    typeof value === 'object'
+    && value !== null
+    && 'toJSON' in value
+    && typeof value.toJSON === 'function'
+  ) {
+    const next = value.toJSON()
+    // Avoid infinite recursion when toJSON returns the same object
+    if (next !== value) {
+      return normalizeValue(next)
+    }
+  }
+
   // Primitives
   if (typeof value === 'string' || typeof value === 'boolean') {
     return value

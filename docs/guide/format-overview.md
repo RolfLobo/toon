@@ -330,4 +330,28 @@ Numbers are emitted in canonical decimal form (no exponent notation, no trailing
 
 Decoders accept both decimal and exponent forms on input (e.g., `42`, `-3.14`, `1e-6`), and treat tokens with forbidden leading zeros (e.g., `"05"`) as strings, not numbers.
 
+### Custom Serialization with toJSON
+
+Objects with a `toJSON()` method are serialized by calling the method and normalizing its result before encoding, similar to `JSON.stringify`:
+
+```ts
+const obj = {
+  data: 'example',
+  toJSON() {
+    return { info: this.data }
+  }
+}
+
+encode(obj)
+// info: example
+```
+
+The `toJSON()` method:
+
+- Takes precedence over built-in normalization (Date, Array, Set, Map)
+- Results are recursively normalized
+- Is called for objects with `toJSON` in their prototype chain
+
+---
+
 For complete rules on quoting, escaping, type conversions, and strict-mode decoding, see [spec §2–4 (data model), §7 (strings and keys), and §14 (strict mode)](https://github.com/toon-format/spec/blob/main/SPEC.md).

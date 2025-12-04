@@ -54,6 +54,7 @@ Non-JSON-serializable values are normalized before encoding:
 
 | Input | Output |
 |-------|--------|
+| `Object` with `toJSON()` method | Result of calling `toJSON()`, recursively normalized |
 | Finite number | Canonical decimal (no exponent, no leading/trailing zeros: `1e6` → `1000000`, `-0` → `0`) |
 | `NaN`, `Infinity`, `-Infinity` | `null` |
 | `BigInt` (within safe range) | Number |
