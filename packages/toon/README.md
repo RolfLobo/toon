@@ -921,6 +921,7 @@ Comprehensive guides, references, and resources to help you get the most out of 
 - **Dart:** [toon](https://github.com/toon-format/toon-dart) *(in development)*
 - **Go:** [toon-go](https://github.com/toon-format/toon-go) *(in development)*
 - **Java:** [JToon](https://github.com/toon-format/toon-java)
+- **Julia:** [ToonFormat.jl](https://github.com/toon-format/ToonFormat.jl)
 - **Python:** [toon_format](https://github.com/toon-format/toon-python)
 - **Rust:** [toon_format](https://github.com/toon-format/toon-rust)
 

@@ -17,6 +17,7 @@ These implementations are actively being developed by dedicated teams. Contribut
 | **Dart** | [toon-dart](https://github.com/toon-format/toon-dart) | In Development | Official Team |
 | **Go** | [toon-go](https://github.com/toon-format/toon-go) | In Development | Official Team |
 | **Java** | [toon-java](https://github.com/toon-format/toon-java) | ✅ Stable | Official Team |
+| **Julia** | [ToonFormat.jl](https://github.com/toon-format/ToonFormat.jl) | ✅ Stable | Official Team |
 | **Python** | [toon-python](https://github.com/toon-format/toon-python) | ✅ Stable | Official Team |
 | **Rust** | [toon-rust](https://github.com/toon-format/toon-rust) | ✅ Stable | Official Team |
 | **TypeScript/JavaScript** | [toon](https://github.com/toon-format/toon/tree/main/packages/toon) | ✅ Stable | Official Team |
