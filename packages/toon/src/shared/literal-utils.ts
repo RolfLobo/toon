@@ -1,5 +1,7 @@
 import { FALSE_LITERAL, NULL_LITERAL, TRUE_LITERAL } from '../constants'
 
+const NUMERIC_LITERAL_PATTERN = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)?$/i
+
 export function isBooleanOrNullLiteral(token: string): boolean {
   return token === TRUE_LITERAL || token === FALSE_LITERAL || token === NULL_LITERAL
 }
@@ -15,8 +17,7 @@ export function isNumericLiteral(token: string): boolean {
     return false
 
   // Enforce JSON-like grammar with no forbidden leading zeros
-  const numericPattern = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)?$/i
-  if (!numericPattern.test(token))
+  if (!NUMERIC_LITERAL_PATTERN.test(token))
     return false
 
   const numericValue = Number(token)
