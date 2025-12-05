@@ -14,12 +14,11 @@ export function isNumericLiteral(token: string): boolean {
   if (!token)
     return false
 
-  // Must not have leading zeros (except for `"0"` itself or decimals like `"0.5"`)
-  if (token.length > 1 && token[0] === '0' && token[1] !== '.') {
+  // Enforce JSON-like grammar with no forbidden leading zeros
+  const numericPattern = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)?$/i
+  if (!numericPattern.test(token))
     return false
-  }
 
-  // Check if it's a valid number
   const numericValue = Number(token)
   return !Number.isNaN(numericValue) && Number.isFinite(numericValue)
 }
