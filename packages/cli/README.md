@@ -64,9 +64,9 @@ cat data.toon | toon --decode
 | `--indent <number>` | Indentation size (default: `2`) |
 | `--stats` | Show token count estimates and savings (encode only) |
 | `--no-strict` | Disable strict validation when decoding |
-| `--key-folding <mode>` | Enable key folding: `off`, `safe` (default: `off`) |
-| `--flatten-depth <number>` | Maximum folded segment count when key folding is enabled (default: `Infinity`) |
-| `--expand-paths <mode>` | Enable path expansion: `off`, `safe` (default: `off`) |
+| `--keyFolding <mode>` | Enable key folding: `off`, `safe` (default: `off`) |
+| `--flattenDepth <number>` | Maximum folded segment count when key folding is enabled (default: `Infinity`) |
+| `--expandPaths <mode>` | Enable path expansion: `off`, `safe` (default: `off`) |
 
 ## Advanced Examples
 
@@ -136,7 +136,7 @@ cat million-records.toon | toon --decode > output.json
 - **Encode (JSON → TOON)**: Streams TOON lines to output without full string in memory
 - **Decode (TOON → JSON)**: Uses the same event-based streaming decoder as the `decodeStream` API in `@toon-format/toon`, streaming JSON tokens to output without full string in memory
 - Peak memory usage scales with data depth, not total size
-- When `--expand-paths safe` is enabled, decode falls back to non-streaming mode internally to apply deep-merge expansion before writing JSON
+- When `--expandPaths safe` is enabled, decode falls back to non-streaming mode internally to apply deep-merge expansion before writing JSON
 
 > [!NOTE]
 > When using `--stats` with encode, the full output string is kept in memory for token counting. Omit `--stats` for maximum memory efficiency with very large datasets.
@@ -149,7 +149,7 @@ Collapse nested wrapper chains to reduce tokens:
 
 ```bash
 # Encode with key folding
-toon input.json --key-folding safe -o output.toon
+toon input.json --keyFolding safe -o output.toon
 ```
 
 For data like:
@@ -179,24 +179,24 @@ data:
 
 ```bash
 # Fold maximum 2 levels deep
-toon input.json --key-folding safe --flatten-depth 2 -o output.toon
+toon input.json --keyFolding safe --flattenDepth 2 -o output.toon
 ```
 
 #### Path expansion on decode
 
 ```bash
 # Reconstruct nested structure from folded keys
-toon data.toon --expand-paths safe -o output.json
+toon data.toon --expandPaths safe -o output.json
 ```
 
 #### Round-trip workflow
 
 ```bash
 # Encode with folding
-toon input.json --key-folding safe -o compressed.toon
+toon input.json --keyFolding safe -o compressed.toon
 
 # Decode with expansion (restores original structure)
-toon compressed.toon --expand-paths safe -o output.json
+toon compressed.toon --expandPaths safe -o output.json
 
 # Verify round-trip
 diff input.json output.json
@@ -206,7 +206,7 @@ diff input.json output.json
 
 ```bash
 # Key folding + tab delimiter + stats
-toon data.json --key-folding safe --delimiter "\t" --stats -o output.toon
+toon data.json --keyFolding safe --delimiter "\t" --stats -o output.toon
 ```
 
 ## Why Use the CLI?

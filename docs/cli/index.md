@@ -120,7 +120,7 @@ Both encoding and decoding operations use streaming output, writing incrementall
 - Uses the same event-based streaming decoder as the `decodeStream` API in `@toon-format/toon`.
 - Streams JSON tokens to output.
 - No full JSON string in memory.
-- When `--expand-paths safe` is enabled, falls back to non-streaming decode internally to apply deep-merge expansion before writing JSON.
+- When `--expandPaths safe` is enabled, falls back to non-streaming decode internally to apply deep-merge expansion before writing JSON.
 
 Process large files with minimal memory usage:
 
@@ -153,9 +153,9 @@ When using the `--stats` flag with encode, the CLI builds the full TOON string o
 | `--indent <number>` | Indentation size (default: `2`) |
 | `--stats` | Show token count estimates and savings (encode only) |
 | `--no-strict` | Disable strict validation when decoding |
-| `--key-folding <mode>` | Key folding mode: `off`, `safe` (default: `off`) |
-| `--flatten-depth <number>` | Maximum segments to fold (default: `Infinity`) – requires `--key-folding safe` |
-| `--expand-paths <mode>` | Path expansion mode: `off`, `safe` (default: `off`) |
+| `--keyFolding <mode>` | Key folding mode: `off`, `safe` (default: `off`) |
+| `--flattenDepth <number>` | Maximum segments to fold (default: `Infinity`) – requires `--keyFolding safe` |
+| `--expandPaths <mode>` | Path expansion mode: `off`, `safe` (default: `off`) |
 
 ## Advanced Examples
 
@@ -247,11 +247,11 @@ Collapse nested wrapper chains to reduce tokens (since spec v1.5):
 ::: code-group
 
 ```bash [Basic key folding]
-toon input.json --key-folding safe -o output.toon
+toon input.json --keyFolding safe -o output.toon
 ```
 
 ```bash [Limit folding depth]
-toon input.json --key-folding safe --flatten-depth 2 -o output.toon
+toon input.json --keyFolding safe --flattenDepth 2 -o output.toon
 ```
 
 :::
@@ -270,7 +270,7 @@ For data like:
 }
 ```
 
-With `--key-folding safe`, output becomes:
+With `--keyFolding safe`, output becomes:
 
 ```yaml
 data.metadata.items[2]: a,b
@@ -289,19 +289,19 @@ data:
 Reconstruct nested structure from folded keys when decoding:
 
 ```bash
-toon data.toon --expand-paths safe -o output.json
+toon data.toon --expandPaths safe -o output.json
 ```
 
-This pairs with `--key-folding safe` for lossless round-trips.
+This pairs with `--keyFolding safe` for lossless round-trips.
 
 ### Round-Trip Workflow
 
 ```bash
 # Encode with folding
-toon input.json --key-folding safe -o compressed.toon
+toon input.json --keyFolding safe -o compressed.toon
 
 # Decode with expansion (restores original structure)
-toon compressed.toon --expand-paths safe -o output.json
+toon compressed.toon --expandPaths safe -o output.json
 
 # Verify round-trip
 diff input.json output.json
@@ -313,5 +313,5 @@ Combine multiple options for maximum efficiency:
 
 ```bash
 # Key folding + tab delimiter + stats
-toon data.json --key-folding safe --delimiter "\t" --stats -o output.toon
+toon data.json --keyFolding safe --delimiter "\t" --stats -o output.toon
 ```

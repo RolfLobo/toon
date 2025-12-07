@@ -306,7 +306,7 @@ describe('toon CLI', () => {
   })
 
   describe('encode options', () => {
-    it('encodes with --key-folding safe', async () => {
+    it('encodes with --keyFolding safe', async () => {
       const data = {
         data: {
           metadata: {
@@ -332,7 +332,7 @@ describe('toon CLI', () => {
       }
     })
 
-    it('encodes with --flatten-depth', async () => {
+    it('encodes with --flattenDepth', async () => {
       const data = {
         level1: {
           level2: {
@@ -362,7 +362,7 @@ describe('toon CLI', () => {
   })
 
   describe('decode options', () => {
-    it('decodes with --expand-paths safe', async () => {
+    it('decodes with --expandPaths safe', async () => {
       const data = {
         data: {
           metadata: {
@@ -715,7 +715,7 @@ describe('toon CLI', () => {
       }
     })
 
-    it('rejects invalid --key-folding value', async () => {
+    it('rejects invalid --keyFolding value', async () => {
       const context = await createCliTestContext({
         'input.json': JSON.stringify({ value: 1 }),
       })
