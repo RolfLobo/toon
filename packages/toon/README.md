@@ -924,6 +924,7 @@ Comprehensive guides, references, and resources to help you get the most out of 
 - **Julia:** [ToonFormat.jl](https://github.com/toon-format/ToonFormat.jl)
 - **Python:** [toon_format](https://github.com/toon-format/toon-python)
 - **Rust:** [toon_format](https://github.com/toon-format/toon-rust)
+- **Swift:** [toon-swift](https://github.com/toon-format/toon-swift)
 
 ### Community Implementations
 
@@ -942,7 +943,6 @@ Comprehensive guides, references, and resources to help you get the most out of 
 - **Laravel Framework:** [laravel-toon](https://github.com/jobmetric/laravel-toon)
 - **R**: [toon](https://github.com/laresbernardo/toon)
 - **Ruby:** [toon-ruby](https://github.com/andrepcg/toon-ruby)
-- **Swift:** [TOONEncoder](https://github.com/mattt/TOONEncoder)
 - **Kotlin:** [ktoon (using kotlinx.serialization)](https://github.com/lukelast/ktoon)
 
 ## Credits

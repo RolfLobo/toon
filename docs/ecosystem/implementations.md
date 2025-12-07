@@ -20,6 +20,7 @@ These implementations are actively being developed by dedicated teams. Contribut
 | **Julia** | [ToonFormat.jl](https://github.com/toon-format/ToonFormat.jl) | ✅ Stable | Official Team |
 | **Python** | [toon-python](https://github.com/toon-format/toon-python) | ✅ Stable | Official Team |
 | **Rust** | [toon-rust](https://github.com/toon-format/toon-rust) | ✅ Stable | Official Team |
+| **Swift** | [toon-swift](https://github.com/toon-format/toon-swift) | ✅ Stable | Official Team |
 | **TypeScript/JavaScript** | [toon](https://github.com/toon-format/toon/tree/main/packages/toon) | ✅ Stable | Official Team |
 
 ## Community Implementations
@@ -44,7 +45,6 @@ Community members have created implementations in additional languages:
 | **R** | [toon](https://github.com/laresbernardo/toon) | [@laresbernardo](https://github.com/laresbernardo) |
 | **Ruby** | [toon-ruby](https://github.com/andrepcg/toon-ruby) | [@andrepcg](https://github.com/andrepcg) |
 | **Scala** | [toon4s](https://github.com/vim89/toon4s) | [@vim89](https://github.com/vim89) |
-| **Swift** | [TOONEncoder](https://github.com/mattt/TOONEncoder) | [@mattt](https://github.com/mattt) |
 
 ## Contributing an Implementation
 
